@@ -46,7 +46,7 @@ function m3Combo(pa,pb,P,Q){
   else if(st(s1)&&st(s2)){for(let i=0;i<n;i++){add(i,y);add(x,i);}P.sp=Q.sp=0;pzPraise('✨ פסים כפולים!',true);}
   else if((st(s1)&&s2===4)||(s1===4&&st(s2))){for(let i=0;i<n;i++)for(let d=-1;d<=1;d++){add(i,y+d);add(x+d,i);}P.sp=Q.sp=0;pzPraise('🌟 צלב ענק!',true);}
   else if(s1===4&&s2===4){for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++)add(x+dx,y+dy);P.sp=Q.sp=0;pzPraise('🎁 פיצוץ כפול!',true);}
-  [523,784,1047,1319,1568].forEach((f,i)=>setTimeout(()=>beep(f,.08,'sine'),i*55));
+  chime([523,784,1047,1319,1568],55,.08,'sine');
   m.combo=1;m3Clear(clr,[]);
 }
 function m3Resolve(runs){
@@ -125,7 +125,7 @@ function m3Settle(){
   if(m3Done()){
     const frac=m.moves/lv.moves;G.got=m.bonus?1:frac>=.35?3:frac>=.15?2:1;G.stars=new Set();
     // sugar rush: every move left becomes a striped candy that goes off
-    if(m.moves>0&&!calmFx()){m.sugar=true;m.sugarLeft=Math.min(m.moves,10);pzPraise('🍭 סוכר-על!',true);[523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*70));m3SugarStep();return;}
+    if(m.moves>0&&!calmFx()){m.sugar=true;m.sugarLeft=Math.min(m.moves,10);pzPraise('🍭 סוכר-על!',true);chime([523,659,784,1047,1319],70,.1,'sine');m3SugarStep();return;}
     toast('כל הכבוד! 🍬 נשארו '+m.moves+' מהלכים');win();return;}
   if(lv.spread&&!m.chocHit&&m.swapA!=='spread'){m3Spread();m.swapA='spread';}
   if(m.moves<=0){
@@ -184,7 +184,7 @@ function bkPlace(){
     rows.forEach(y=>k.grid[y].fill(0));cols.forEach(x=>k.grid.forEach(r=>r[x]=0));k.popT=now;k.cleared+=lines;k.streak++;
     // points: every block, more for several lines at once, more again for a streak, a big bonus for an empty board
     let pts=k.flash.length*10+(lines>1?lines*lines*20:0)+(k.streak>1?k.streak*10*lines:0);const empty=k.grid.every(r=>r.every(v=>!v));if(empty)pts+=300;k.score+=pts;
-    [600,800,1000,1200,1400].slice(0,lines+1).forEach((f,i)=>setTimeout(()=>beep(f,.09,'sine'),i*70));
+    chime([600,800,1000,1200,1400].slice(0,lines+1),70,.09,'sine');
     k.flash.forEach(([x,y,c],i)=>{if(i%2===0)sparkle(x+1,y,[BKC[c],'#ffffff'],3);});
     pzPraise(empty?'✨ לוח נקי! +300':lines>=4?'לא ייאמן! 🤩':lines===3?'מדהים! 🌟':lines===2?'מעולה! 🎉':k.streak>=3?'🔥 רצף ×'+k.streak:'יופי! ✨',lines>=3||empty);
     k.lastPts={v:pts,t0:now};}
@@ -283,7 +283,7 @@ function pzDraw(s,n,W,now){
       if(c.pop){const e=Math.min(1,(now-m.mT)/230);r*=1+e*.4;ctx.globalAlpha=1-e;}
       if(m.hint&&m.hint.cells.some(q=>q[0]===x&&q[1]===y)){ctx.globalAlpha=.4+.3*Math.sin(now/150);circle(ctx,cx,cy,s*.48,'#ffffff');ctx.globalAlpha=c.pop?ctx.globalAlpha:1;}
       ctx.save();ctx.translate(cx,cy+r*(1-sy));ctx.scale(sx,sy);drawCandy(ctx,0,0,r,c.c,c.sp,now);ctx.restore();
-      if(c.lk){ctx.strokeStyle='#495057';ctx.lineWidth=Math.max(2,s*.07);ctx.beginPath();for(let i=-1;i<=1;i++){ctx.moveTo(cx+i*s*.22,cy-s*.42);ctx.lineTo(cx+i*s*.22,cy+s*.42);}ctx.moveTo(cx-s*.42,cy);ctx.lineTo(cx+s*.42,cy);ctx.stroke();ctx.font=Math.round(s*.26)+'px sans-serif';ctx.fillText('🔒',cx+s*.28,cy-s*.28);}
+      if(c.lk){ctx.strokeStyle='#495057';ctx.lineWidth=Math.max(2,s*.07);ctx.beginPath();for(let i=-1;i<=1;i++){ctx.moveTo(cx+i*s*.22,cy-s*.42);ctx.lineTo(cx+i*s*.22,cy+s*.42);}ctx.moveTo(cx-s*.42,cy);ctx.lineTo(cx+s*.42,cy);ctx.stroke();glyph('🔒',cx+s*.28,cy-s*.28,s*.26);}
       ctx.globalAlpha=1;}
     // the cursor (arrows) and the chosen candy
     const X=G.p.x*s,Y=G.p.y*s;ctx.strokeStyle='#ffffff';ctx.lineWidth=Math.max(2,s*.07);rrect(ctx,X+s*.04,Y+s*.04,s*.92,s*.92,s*.18);ctx.stroke();
@@ -306,7 +306,7 @@ function pzDraw(s,n,W,now){
     ctx.fillStyle='rgba(255,255,255,.08)';rrect(ctx,s*.3,(m+.15)*s,W-s*.6,s*1.75,s*.25);ctx.fill();
     k.tray.forEach((q,i)=>{if(q.used)return;const w=Math.max(...q.cells.map(c=>c[0]))+1,h=Math.max(...q.cells.map(c=>c[1]))+1,u=Math.min(s*.38,s*1.5/Math.max(w,h));
       const cx=(i*3+2)*s,cy=(m+1.02)*s;if(i===k.pick){ctx.strokeStyle='#ffd23f';ctx.lineWidth=Math.max(2,s*.07);rrect(ctx,cx-s*1.3,cy-s*.8,s*2.6,s*1.6,s*.2);ctx.stroke();}
-      if(i===k.pick){const bx=cx+s*1.12,by=cy-s*.58,tt=k.turnT&&now-k.turnT<300?(now-k.turnT)/300*Math.PI*2:0;circle(ctx,bx,by,s*.3,'#ffd23f');ctx.save();ctx.translate(bx,by);ctx.rotate(tt);ctx.font=Math.round(s*.38)+'px sans-serif';ctx.fillText('🔄',0,s*.02);ctx.restore();}
+      if(i===k.pick){const bx=cx+s*1.12,by=cy-s*.58,tt=k.turnT&&now-k.turnT<300?(now-k.turnT)/300*Math.PI*2:0;circle(ctx,bx,by,s*.3,'#ffd23f');ctx.save();ctx.translate(bx,by);ctx.rotate(tt);glyph('🔄',0,s*.02,s*.38);ctx.restore();}
       q.cells.forEach(([x,y])=>{ctx.fillStyle=bkFitsAny(q)?BKC[q.col]:'#6c757d';rrect(ctx,cx-w*u/2+x*u+1,cy-h*u/2+y*u+1,u-2,u-2,u*.2);ctx.fill();});});
   }
 }

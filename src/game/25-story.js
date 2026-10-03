@@ -14,7 +14,7 @@ function stMove(d){
     G.p={x:nx,y:ny};enter(nx,ny);
     G.crumbs.push({x:nx,y:ny});if(G.crumbs.length>G.cfg.keep){const c=G.crumbs.shift();G.birds.push({x:c.x,y:c.y,t0:performance.now()});}
     beep(520,.03,'sine');
-    if(!G.hgBack&&nx===lv.goal.x&&ny===lv.goal.y){G.hgBack=true;G.hgSeen=new Set();[784,988,1175].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*80));sparkle(nx,ny,['#ff8fab','#ffd23f','#ffffff'],16);
+    if(!G.hgBack&&nx===lv.goal.x&&ny===lv.goal.y){G.hgBack=true;G.hgSeen=new Set();chime([784,988,1175],80,.1,'sine');sparkle(nx,ny,['#ff8fab','#ffd23f','#ffffff'],16);
       toast('בית הממתקים! 🍭 עכשיו הביתה. הציפורים אכלו חלק מהפירורים, אז תיזכרי בדרך!');updateHud();}
     if(G.hgBack&&nx===lv.start.x&&ny===lv.start.y){win();}
     return;
@@ -25,10 +25,10 @@ function stMove(d){
     const bi=G.bricksLeft.findIndex(b=>b.x===nx&&b.y===ny);
     if(bi>=0){if(G.carry<G.cfg.carry){G.bricksLeft.splice(bi,1);G.carry++;beep(300,.1,'square');toast(G.carry<G.cfg.carry?'לבנה! 🧱 אפשר לקחת עוד '+(G.cfg.carry-G.carry):'הידיים מלאות 🧱 לבית!');}
       else arcSay('הידיים מלאות 🧱 קודם לבית');}
-    if(nx===lv.goal.x&&ny===lv.goal.y&&G.carry){G.built+=G.carry;G.carry=0;[400,500,600].forEach((f,i)=>setTimeout(()=>beep(f,.08,'square'),i*70));sparkle(nx,ny,['#e76f51','#ffd23f'],12);
+    if(nx===lv.goal.x&&ny===lv.goal.y&&G.carry){G.built+=G.carry;G.carry=0;chime([400,500,600],70,.08,'square');sparkle(nx,ny,['#e76f51','#ffd23f'],12);
       if(G.built>=lv.bricks.length){toast('הבית מוכן! 🏠 הזאב נשף ונשף... ולא הצליח! 🐺💨');win();return;}
       toast('בנית! 🧱 עוד '+(lv.bricks.length-G.built)+' לבנים');}
-    if(G.wolfUsed>=lv.wolfSteps){[300,250,200].forEach((f,i)=>setTimeout(()=>beep(f,.2,'sawtooth'),i*150));
+    if(G.wolfUsed>=lv.wolfSteps){chime([300,250,200],150,.2,'sawtooth');
       Object.assign(G,{carry:0,built:0,bricksLeft:lv.bricks.map(b=>Object.assign({},b)),wolfUsed:0,p:{x:lv.start.x,y:lv.start.y}});G.hits=(G.hits||0)+1;G.hurtUntil=performance.now()+1500;
       toast('הזאב הגיע! 🐺💨 הוא נשף ונשף, והלבנים התפזרו. מתחילים שוב');}
     updateHud();return;
@@ -38,11 +38,11 @@ function stMove(d){
     if(nx===lv.giant.x&&ny===lv.giant.y){bumpWall(d);arcSay('ששש... הענק ישן כאן 😴');return;}
     G.p={x:nx,y:ny};enter(nx,ny);
     if(G.creakSet.has(nx+','+ny)){G.noise++;beep(160+G.noise*30,.18,'sawtooth');
-      if(G.noise>=lv.limit){[200,150,100].forEach((f,i)=>setTimeout(()=>beep(f,.25,'sawtooth'),i*200));
+      if(G.noise>=lv.limit){chime([200,150,100],200,.25,'sawtooth');
         G.noise=0;G.hasEgg=false;G.hits=(G.hits||0)+1;arcHurt('הענק התעורר! 👹 "פי-פיי-פו-פאם!" ברחת חזרה לשעועית, והביצה חזרה למקום',lv.start,false);return;}
       arcSay('קריייק! 🪵 רעש '+G.noise+' מתוך '+lv.limit);}
     else beep(520,.03,'sine');
-    if(!G.hasEgg&&nx===lv.egg.x&&ny===lv.egg.y){G.hasEgg=true;sparkle(nx,ny,['#ffd23f','#ffffff'],16);[988,1175,1568].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*80));toast('ביצת הזהב! 🥚✨ עכשיו בשקט בחזרה לשעועית');}
+    if(!G.hasEgg&&nx===lv.egg.x&&ny===lv.egg.y){G.hasEgg=true;sparkle(nx,ny,['#ffd23f','#ffffff'],16);chime([988,1175,1568],80,.1,'sine');toast('ביצת הזהב! 🥚✨ עכשיו בשקט בחזרה לשעועית');}
     if(G.hasEgg&&nx===lv.start.x&&ny===lv.start.y)win();
     updateHud();return;
   }
@@ -128,7 +128,7 @@ function stDraw(s,n,W,now){
     ctx.fillStyle='#2d6a4f';ctx.fillRect(0,0,W,W);for(let y=0;y<n;y++)for(let x=0;x<n;x++)if((x*5+y*3)%4===0)circle(ctx,(x+.3)*s,(y+.7)*s,s*.08,'#40916c');
     drawWalls(lv.g,n,s,'#081c15');
     G.crumbs.forEach((c,i)=>{const a=.5+.5*i/G.crumbs.length;ctx.globalAlpha=a;circle(ctx,(c.x+.4)*s,(c.y+.55)*s,s*.07,'#f4d58d');circle(ctx,(c.x+.62)*s,(c.y+.42)*s,s*.06,'#e9c46a');ctx.globalAlpha=1;});
-    G.birds.forEach(b=>{const e=(now-b.t0)/900;ctx.globalAlpha=1-e;ctx.font=Math.round(s*.45)+'px sans-serif';ctx.fillText('🐦',(b.x+.5+e)*s,(b.y+.5-e*1.5)*s);ctx.globalAlpha=1;});
+    G.birds.forEach(b=>{const e=(now-b.t0)/900;ctx.globalAlpha=1-e;glyph('🐦',(b.x+.5+e)*s,(b.y+.5-e*1.5)*s,s*.45);ctx.globalAlpha=1;});
   }else if(id==='pigs'){
     ctx.fillStyle='#b7e4c7';ctx.fillRect(0,0,W,W);for(let y=0;y<n;y++)for(let x=0;x<n;x++)if((x*7+y*3)%5===0){circle(ctx,(x+.3)*s,(y+.3)*s,s*.05,'#ffffff');circle(ctx,(x+.3)*s,(y+.3)*s,s*.025,'#ffd23f');}
     drawTrail(s,'rgba(255,255,255,.4)');drawWalls(lv.g,n,s,'#a47148');
@@ -165,11 +165,11 @@ function stDraw2(s,n,W,now){
       if(a>0){ctx.fillStyle='rgba(8,20,16,'+a+')';ctx.fillRect(x*s-.5,y*s-.5,s+1,s+1);}}
     G.crumbs.forEach(c=>{if(Math.hypot(c.x-G.vis.x,c.y-G.vis.y)>R){ctx.globalAlpha=.8;circle(ctx,(c.x+.5)*s,(c.y+.5)*s,s*.08,'#f4d58d');ctx.globalAlpha=1;}});
     if(!G.hgBack){ctx.globalAlpha=.5+.3*Math.sin(now/300);circle(ctx,(lv.goal.x+.5)*s,(lv.goal.y+.5)*s,s*.55,'#ff8fab');ctx.globalAlpha=1;drawCandyHouse(ctx,(lv.goal.x+.5)*s,(lv.goal.y+.5)*s,s*.42);}
-    else{ctx.globalAlpha=.5+.3*Math.sin(now/300);circle(ctx,(lv.start.x+.5)*s,(lv.start.y+.5)*s,s*.55,'#ffd23f');ctx.globalAlpha=1;ctx.font=Math.round(s*.6)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🏠',(lv.start.x+.5)*s,(lv.start.y+.5)*s);}
+    else{ctx.globalAlpha=.5+.3*Math.sin(now/300);circle(ctx,(lv.start.x+.5)*s,(lv.start.y+.5)*s,s*.55,'#ffd23f');ctx.globalAlpha=1;glyph('🏠',(lv.start.x+.5)*s,(lv.start.y+.5)*s,s*.6,1);}
   }
   if(id==='pigs'){ctx.fillStyle='rgba(255,255,255,.75)';const X=lv.goal.x*s,Y=lv.goal.y*s;rrect(ctx,X+s*.05,Y-s*.25,s*.9,s*.24,s*.1);ctx.fill();
     ctx.fillStyle='#bc4749';ctx.fillRect(X+s*.1,Y-s*.2,s*.8*G.built/lv.bricks.length,s*.14);
-    if(G.carry){ctx.font=Math.round(s*.32)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🧱'.repeat(G.carry),(G.vis.x+.5)*s,(G.vis.y-.05)*s);}}
+    if(G.carry){glyph('🧱'.repeat(G.carry),(G.vis.x+.5)*s,(G.vis.y-.05)*s,s*.32,1);}}
 }
 
 function drawGummy(c,x,y,r){

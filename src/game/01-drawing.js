@@ -1,4 +1,6 @@
 /* ================= drawing helpers ================= */
+// an emoji (or any text) on the board, `px` tall; centre=1 also centres it on x,y
+function glyph(t,x,y,px,centre){ctx.font=Math.round(px)+'px sans-serif';if(centre){ctx.textAlign='center';ctx.textBaseline='middle';}ctx.fillText(t,x,y);}
 function circle(c,x,y,r,f){if(!(r>0))return;c.fillStyle=f;c.beginPath();c.arc(x,y,r,0,7);c.fill();}
 function eyes(c,x,y,r,dx,sz){circle(c,x-dx*r,y,sz*r,'#2a2140');circle(c,x+dx*r,y,sz*r,'#2a2140');circle(c,x-dx*r+sz*r*.35,y-sz*r*.35,sz*r*.35,'#fff');circle(c,x+dx*r+sz*r*.35,y-sz*r*.35,sz*r*.35,'#fff');}
 

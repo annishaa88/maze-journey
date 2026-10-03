@@ -33,15 +33,15 @@ function chMove(d){
     if(nx===lv.goal.x&&ny===lv.goal.y&&G.lightsLeft.length){bumpWall(d);arcSay('הדלת נפתחת רק אחרי כל הפנסים 🏮 נשארו '+G.lightsLeft.length);return;}
     G.p={x:nx,y:ny};G.trailPath.push({x:nx,y:ny});enter(nx,ny);
     const li=G.lightsLeft.findIndex(l=>l.x===nx&&l.y===ny);
-    if(li>=0){G.lightsLeft.splice(li,1);[660,880,1100].forEach((f,i)=>setTimeout(()=>beep(f,.08,'sine'),i*70));toast(G.lightsLeft.length?'פנס! 🏮 עוד '+G.lightsLeft.length:'כל הפנסים אצלך! 🏮 רוצי אל היציאה');updateHud();}
+    if(li>=0){G.lightsLeft.splice(li,1);chime([660,880,1100],70,.08,'sine');toast(G.lightsLeft.length?'פנס! 🏮 עוד '+G.lightsLeft.length:'כל הפנסים אצלך! 🏮 רוצי אל היציאה');updateHud();}
     if(G.shIdx<0&&G.trailPath.length>G.cfg.delay){G.shIdx=0;G.shAt=performance.now();toast('הצל יצא לדרך! 👣 אל תחזרי על העקבות שלך');}
     shadowHit();if(atGoal())win();return;
   }
   if(id==='floors'){
     G.p={x:nx,y:ny};enter(nx,ny);const k=nx+','+ny;
-    if(lv.links[k]){const L=lv.links[k],[a,b]=L.to.split(',').map(Number);G.p={x:a,y:b};enter(a,b);[L.up?500:700,L.up?700:500].forEach((f,i)=>setTimeout(()=>beep(f,.08,'sine'),i*80));
+    if(lv.links[k]){const L=lv.links[k],[a,b]=L.to.split(',').map(Number);G.p={x:a,y:b};enter(a,b);chime([L.up?500:700,L.up?700:500],80,.08,'sine');
       toast(L.up?'עלית קומה! ⬆️ קומה '+(floorOf(a,b)+1):'ירדת קומה ⬇️ קומה '+(floorOf(a,b)+1));updateHud();}
-    else if(lv.holes[k]){const [a,b]=lv.holes[k].split(',').map(Number);G.p={x:a,y:b};enter(a,b);[600,400,250].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*70));toast('אופס! נפלת דרך חור לקומה '+(floorOf(a,b)+1)+' 🕳️');updateHud();}
+    else if(lv.holes[k]){const [a,b]=lv.holes[k].split(',').map(Number);G.p={x:a,y:b};enter(a,b);chime([600,400,250],70,.1,'sine');toast('אופס! נפלת דרך חור לקומה '+(floorOf(a,b)+1)+' 🕳️');updateHud();}
     else beep(520,.03,'sine');
     if(atGoal())win();return;
   }
@@ -49,7 +49,7 @@ function chMove(d){
     if(nx===lv.goal.x&&ny===lv.goal.y&&!G.doorOpen){bumpWall(d);openKeypad();return;}
     G.p={x:nx,y:ny};enter(nx,ny);
     const ci=lv.clues.findIndex(c=>c.x===nx&&c.y===ny);
-    if(ci>=0&&!G.found.has(ci)){G.found.add(ci);[700,900].forEach((f,i)=>setTimeout(()=>beep(f,.08,'sine'),i*70));
+    if(ci>=0&&!G.found.has(ci)){G.found.add(ci);chime([700,900],70,.08,'sine');
       toast('רמז! 📜 '+CLUEC[ci]+' = '+lv.clueText[ci]);updateHud();}
     if(atGoal())win();return;
   }
@@ -90,7 +90,7 @@ function kpPress(v){
   if(v==='<'){G.typed=G.typed.slice(0,-1);kpShow();return;}
   if(G.typed.length>=lv.code.length)return;G.typed+=v;beep(600+Number(v)*40,.05,'square');kpShow();
   if(G.typed.length===lv.code.length){
-    if(G.typed===lv.code.join('')){setTimeout(()=>{document.getElementById('keypad').hidden=true;G.doorOpen=true;[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.12,'square'),i*90));
+    if(G.typed===lv.code.join('')){setTimeout(()=>{document.getElementById('keypad').hidden=true;G.doorOpen=true;chime([523,659,784,1047],90,.12,'square');
       toast('קליק! 🔓 הדלת נפתחה, אפשר לצאת');updateHud();},250);}
     else{const box=document.querySelector('#keypad .kp');box.classList.remove('shake');void box.offsetWidth;box.classList.add('shake');beep(180,.25,'square');
       document.getElementById('kpNote').textContent='הקוד לא נכון. בדקי את החישובים ברמזים 🔎';setTimeout(()=>{G.typed='';kpShow();},500);}}
@@ -141,7 +141,7 @@ function chDraw(s,n,W,now){
     drawTrail(s,'rgba(120,80,40,.2)');drawWalls(lv.g,n,s,'#6d4c41');
     lv.clues.forEach((c,i)=>{const cx=(c.x+.5)*s,cy=(c.y+.5)*s;if(G.found.has(i)){ctx.globalAlpha=.35;}
       ctx.fillStyle='#fff8e1';rrect(ctx,cx-s*.32,cy-s*.38,s*.64,s*.76,s*.08);ctx.fill();ctx.strokeStyle='#c9a227';ctx.lineWidth=Math.max(1,s*.05);ctx.stroke();
-      ctx.font=Math.round(s*.36)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(G.found.has(i)?CLUEC[i]:'📜',cx,cy);ctx.globalAlpha=1;});
+      glyph(G.found.has(i)?CLUEC[i]:'📜',cx,cy,s*.36,1);ctx.globalAlpha=1;});
   }
 }
 function chDraw2(s,n,W,now){
@@ -150,7 +150,7 @@ function chDraw2(s,n,W,now){
     G.bpos.forEach((b,i)=>{let x=b[0],y=b[1];if(a&&a.from[i]){const f=a.from.slice().sort((p,q)=>Math.hypot(p[0]-b[0],p[1]-b[1])-Math.hypot(q[0]-b[0],q[1]-b[1]))[0];x=f[0]+(b[0]-f[0])*e;y=f[1]+(b[1]-f[1])*e;}
       drawBoulder(ctx,(x+.5)*s,(y+.5)*s,s*.36);});}
   if(id==='shadow'&&G.shIdx>=0){const c=G.trailPath[G.shIdx],[x,y]=glide(G.shVis||(G.shVis={}),c.x,c.y);drawShadowGhost(ctx,(x+.5)*s,(y+.5)*s,s*.4,now);}
-  if(id==='shadow'&&G.lightsLeft.length){const X=lv.goal.x*s,Y=lv.goal.y*s;ctx.fillStyle='rgba(20,15,40,.45)';rrect(ctx,X+s*.08,Y+s*.08,s*.84,s*.84,s*.14);ctx.fill();ctx.font=Math.round(s*.42)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🔒',X+s/2,Y+s*.52);}
+  if(id==='shadow'&&G.lightsLeft.length){const X=lv.goal.x*s,Y=lv.goal.y*s;ctx.fillStyle='rgba(20,15,40,.45)';rrect(ctx,X+s*.08,Y+s*.08,s*.84,s*.84,s*.14);ctx.fill();glyph('🔒',X+s/2,Y+s*.52,s*.42,1);}
   if(id==='escape'&&G.doorOpen){ctx.font=Math.round(s*.4)+'px sans-serif';ctx.textAlign='center';ctx.fillText('🔓',(lv.goal.x+.8)*s,(lv.goal.y+.2)*s);}
 }
 kit(['tilt','shadow','floors','escape'],{move:chMove,tick:chTick,hud:chHud,draw:chDraw,draw2:chDraw2});

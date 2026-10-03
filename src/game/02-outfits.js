@@ -106,7 +106,7 @@ function showPop(){
     document.getElementById('mpDesc').textContent=list.map(m=>m.name).join(' · ');setTimeout(()=>speak(list.length+' מדליות חדשות'),300);}
   const el=document.getElementById('medalPop'),inGame=!document.getElementById('gameScreen').hidden,winUp=!document.getElementById('win').hidden||!document.getElementById('duelRes').hidden;
   el.classList.toggle('top',inGame&&!winUp);el.hidden=false;
-  [784,988,1175,1568].forEach((f,i)=>setTimeout(()=>beep(f,.15),i*90));
+  chime([784,988,1175,1568],90,.15);
   setTimeout(()=>{el.hidden=true;popBusy=false;setTimeout(showPop,250);},list.length>1?3400:2600);
 }
 function drawChar(c,C,x,y,r,outfit){

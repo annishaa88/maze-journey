@@ -18,7 +18,7 @@ function wzAction(){
     if(W.casting){W.casting=false;W.spell=[];toast('הלחש בוטל');updateHud();return;}
     const near=[0,1,2,3].map(d=>GEN.edgeKey(G.p.x,G.p.y,d)).find(k=>lv.doors[k]&&!W.open.has(k));
     if(!near){toast('גשי לדלת קסומה ✨ ואז לחצי 🪄');return;}
-    W.casting=true;W.spell=[];W.door=near;[880,1175].forEach((f,i)=>setTimeout(()=>beep(f,.08,'sine'),i*70));
+    W.casting=true;W.spell=[];W.door=near;chime([880,1175],70,.08,'sine');
     toast('לחצי על החיצים לפי הסדר: '+lv.doors[near].map(a=>ARW[a]).join(' '));updateHud();}
 }
 function wzMove(d){
@@ -42,10 +42,10 @@ function wzMove(d){
     if(lv.bars.some(b=>b.x===nx&&b.y===ny)&&!W.brewed){bumpWall(d);arcSay(W.bag.size<lv.want.length?'וילון קסם! 🔮 צריך שיקוי. המתכון: '+lv.want.join(' '):'יש לך הכול! לכי לקדרה 🧪 לבשל את השיקוי');return;}
     G.p={x:nx,y:ny};enter(nx,ny);beep(520,.03,'sine');
     const it=lv.items.find(q=>q.x===nx&&q.y===ny);
-    if(it&&!W.bag.has(it.e)){if(it.good){W.bag.add(it.e);[700,900].forEach((f,i)=>setTimeout(()=>beep(f,.08,'sine'),i*70));toast('לקחת '+it.e+'! '+(W.bag.size<lv.want.length?'עוד '+(lv.want.length-W.bag.size):'עכשיו לקדרה 🧪'));updateHud();}
+    if(it&&!W.bag.has(it.e)){if(it.good){W.bag.add(it.e);chime([700,900],70,.08,'sine');toast('לקחת '+it.e+'! '+(W.bag.size<lv.want.length?'עוד '+(lv.want.length-W.bag.size):'עכשיו לקדרה 🧪'));updateHud();}
       else arcSay(it.e+' לא במתכון. המתכון: '+lv.want.join(' '));}
     if(nx===lv.cauldron.x&&ny===lv.cauldron.y&&!W.brewed){
-      if(W.bag.size>=lv.want.length){W.brewed=true;sparkle(nx,ny,['#c77dff','#7bf1a8','#ffd23f'],20);[523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*80));toast('בּוּלבּוּל! 🧪 השיקוי מוכן. עכשיו אפשר לעבור דרך וילונות הקסם');updateHud();}
+      if(W.bag.size>=lv.want.length){W.brewed=true;sparkle(nx,ny,['#c77dff','#7bf1a8','#ffd23f'],20);chime([523,659,784,1047,1319],80,.1,'sine');toast('בּוּלבּוּל! 🧪 השיקוי מוכן. עכשיו אפשר לעבור דרך וילונות הקסם');updateHud();}
       else arcSay('הקדרה מחכה 🧪 חסר: '+lv.want.filter(e=>!W.bag.has(e)).join(' '));}
     if(atGoal())win();return;
   }
@@ -53,7 +53,7 @@ function wzMove(d){
     if(lv.g[y][x][d]){bumpWall(d);return;}
     G.p={x:nx,y:ny};enter(nx,ny);W.energy--;beep(520,.03,'sine');
     const tw=lv.towers.find(t=>t.x===nx&&t.y===ny);
-    if(tw&&W.letters.has(tw.c)){W.letters.delete(tw.c);W.energy=lv.energy;sparkle(nx,ny,[OWLC[tw.c],'#ffffff'],14);[784,988,1175].forEach((f,i)=>setTimeout(()=>beep(f,.09,'sine'),i*70));
+    if(tw&&W.letters.has(tw.c)){W.letters.delete(tw.c);W.energy=lv.energy;sparkle(nx,ny,[OWLC[tw.c],'#ffffff'],14);chime([784,988,1175],70,.09,'sine');
       if(!W.letters.size){toast('כל המכתבים נמסרו! 🦉✉️');updateHud();win();return;}toast('מכתב נמסר! ✉️ הינשוף קיבל חטיף וחזר לכוחות');}
     else if((nx===0&&ny===0)||lv.perches.some(p=>p.x===nx&&p.y===ny)){if(W.energy<lv.energy){W.energy=lv.energy;beep(880,.08,'sine');arcSay('הינשוף נח 🌳 וחזר לכוחות');}}
     if(W.energy<=0){W.energy=lv.energy;G.p={x:0,y:0};G.hits=(G.hits||0)+1;G.hurtUntil=performance.now()+1200;toast('הינשוף התעייף 😴 ועף הביתה. המכתבים עדיין אצלך');}
@@ -68,7 +68,7 @@ function wzMove(d){
     if(W.casting){const rune=lv.doors[W.door];
       if(d!==rune[W.spell.length]){beep(180,.15,'square');buzz(30);W.miss={t0:performance.now()};arcSay('לא החץ הזה 🙂 עכשיו צריך '+ARW[rune[W.spell.length]]);updateHud();return;}
       W.spell.push(d);beep(600+W.spell.length*90,.07,'sine');
-      if(W.spell.length>=rune.length){W.casting=false;W.spell=[];W.open.add(W.door);const [a,b]=W.door.split(',');sparkle(+a,+b,['#c77dff','#ffd23f','#ffffff'],20);[523,784,1047,1568].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*80));toast('✨ הדלת נפתחה! לחש מושלם');}
+      if(W.spell.length>=rune.length){W.casting=false;W.spell=[];W.open.add(W.door);const [a,b]=W.door.split(',');sparkle(+a,+b,['#c77dff','#ffd23f','#ffffff'],20);chime([523,784,1047,1568],80,.1,'sine');toast('✨ הדלת נפתחה! לחש מושלם');}
       updateHud();return;}
     const k=GEN.edgeKey(x,y,d);if(lv.doors[k]&&!W.open.has(k)){bumpWall(d);arcSay('דלת קסומה! 🚪 לחצי 🪄 ואז על החיצים: '+lv.doors[k].map(a=>ARW[a]).join(' '));return;}
     if(lv.g[y][x][d]){bumpWall(d);return;}
@@ -90,7 +90,7 @@ function wzPass(){
 function wzKeyCatch(){
   const W=G.wz,lv=G.lv,n=lv.n;const ki=W.keys.findIndex(k=>k.x===G.p.x&&k.y===G.p.y);if(ki<0)return;const k=W.keys[ki];
   const want=lv.need[W.gotKeys.length];
-  if(k.c===want){W.keys.splice(ki,1);W.gotKeys.push(k.c);sparkle(k.x,k.y,[KEYCOL[k.c],'#ffffff'],14);[784,988].forEach((f,i)=>setTimeout(()=>beep(f,.09,'sine'),i*70));
+  if(k.c===want){W.keys.splice(ki,1);W.gotKeys.push(k.c);sparkle(k.x,k.y,[KEYCOL[k.c],'#ffffff'],14);chime([784,988],70,.09,'sine');
     toast(W.gotKeys.length<lv.need.length?'תפסת! 🗝️ עכשיו את '+KEYE[lv.need[W.gotKeys.length]]:'כל המפתחות! 🗝️ לדלת');updateHud();}
   else{const free=[];for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(!lv.t[y][x]&&Math.abs(x-G.p.x)+Math.abs(y-G.p.y)>=3&&!(x===lv.goal.x&&y===lv.goal.y)&&!W.keys.some(o=>o.x===x&&o.y===y))free.push([x,y]);
     const c=free[rndi(free.length)];if(c){k.x=c[0];k.y=c[1];k.gx=null;}beep(300,.12,'triangle');arcSay('לא המפתח הזה! 🗝️💨 צריך את '+(want!=null?KEYE[want]:''));}
@@ -173,8 +173,8 @@ function wzDraw(s,n,W,now){
     const gr=ctx.createLinearGradient(0,0,0,W);gr.addColorStop(0,'#48cae4');gr.addColorStop(1,'#caf0f8');ctx.fillStyle=gr;ctx.fillRect(0,0,W,W);
     ctx.globalAlpha=.25;ctx.strokeStyle='#ffffff';ctx.setLineDash([s*.15,s*.2]);ctx.lineWidth=Math.max(1,s*.04);ctx.beginPath();lv.ys.forEach((y,x)=>{if(x)ctx.lineTo((x+.5)*s,(y+.5)*s);else ctx.moveTo((x+.5)*s,(y+.5)*s);});ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
     for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(lv.t[y][x]){const cx=(x+.5)*s,cy=(y+.5)*s+Math.sin(now/700+x)*s*.04;circle(ctx,cx-s*.2,cy+s*.05,s*.25,'#ffffff');circle(ctx,cx+s*.2,cy+s*.05,s*.25,'#ffffff');circle(ctx,cx,cy-s*.1,s*.3,'#f8f9fa');}
-    lv.rings.forEach((r,i)=>{const cx=(r.x+.5)*s,cy=(r.y+.5)*s,got=Z.ringsGot.has(i);ctx.strokeStyle=got?'#52b788':'#ffd23f';ctx.lineWidth=Math.max(3,s*.12);ctx.beginPath();ctx.ellipse(cx,cy,s*.2,s*.42,0,0,7);ctx.stroke();if(got){ctx.font=Math.round(s*.3)+'px sans-serif';ctx.fillText('✓',cx,cy);}});
-    Z.birds.forEach(b=>{const [bx,by]=glide(b,b.x,b.y);ctx.font=Math.round(s*.55)+'px sans-serif';ctx.fillText('🐦',(bx+.5)*s,(by+.5)*s);});
+    lv.rings.forEach((r,i)=>{const cx=(r.x+.5)*s,cy=(r.y+.5)*s,got=Z.ringsGot.has(i);ctx.strokeStyle=got?'#52b788':'#ffd23f';ctx.lineWidth=Math.max(3,s*.12);ctx.beginPath();ctx.ellipse(cx,cy,s*.2,s*.42,0,0,7);ctx.stroke();if(got){glyph('✓',cx,cy,s*.3);}});
+    Z.birds.forEach(b=>{const [bx,by]=glide(b,b.x,b.y);glyph('🐦',(bx+.5)*s,(by+.5)*s,s*.55);});
   }else if(id==='stairs'){
     ctx.fillStyle='#3c2f2f';ctx.fillRect(0,0,W,W);for(let y=0;y<n;y++)for(let x=0;x<n;x++){ctx.fillStyle=(x+y)%2?'#4a3b3b':'#45373a';ctx.fillRect(x*s,y*s,s+.5,s+.5);}
     for(let i=0;i<n;i++)if(i%3===1){ctx.globalAlpha=.5+.3*Math.sin(now/300+i);circle(ctx,(i+.5)*s,s*.12,s*.06,'#ffd166');ctx.globalAlpha=1;}
@@ -185,16 +185,16 @@ function wzDraw(s,n,W,now){
   }else if(id==='potion'){
     ctx.fillStyle='#2d2a32';ctx.fillRect(0,0,W,W);for(let y=0;y<n;y++)for(let x=0;x<n;x++){ctx.fillStyle=(x+y)%2?'#3b3640':'#36313b';ctx.fillRect(x*s,y*s,s+.5,s+.5);}
     drawTrail(s,'rgba(123,241,168,.25)');drawWalls(lv.g,n,s,'#6c757d');
-    lv.bars.forEach(b=>{const X=b.x*s,Y=b.y*s;ctx.globalAlpha=Z.brewed?.25:.75;const gr2=ctx.createLinearGradient(X,Y,X+s,Y+s);gr2.addColorStop(0,'#c77dff');gr2.addColorStop(.5+.3*Math.sin(now/300),'#7b2cbf');gr2.addColorStop(1,'#c77dff');ctx.fillStyle=gr2;ctx.fillRect(X+s*.08,Y+s*.08,s*.84,s*.84);ctx.globalAlpha=1;if(!Z.brewed){ctx.font=Math.round(s*.4)+'px sans-serif';ctx.fillText('🔮',X+s/2,Y+s/2);}});
+    lv.bars.forEach(b=>{const X=b.x*s,Y=b.y*s;ctx.globalAlpha=Z.brewed?.25:.75;const gr2=ctx.createLinearGradient(X,Y,X+s,Y+s);gr2.addColorStop(0,'#c77dff');gr2.addColorStop(.5+.3*Math.sin(now/300),'#7b2cbf');gr2.addColorStop(1,'#c77dff');ctx.fillStyle=gr2;ctx.fillRect(X+s*.08,Y+s*.08,s*.84,s*.84);ctx.globalAlpha=1;if(!Z.brewed){glyph('🔮',X+s/2,Y+s/2,s*.4);}});
     drawCauldron(ctx,(lv.cauldron.x+.5)*s,(lv.cauldron.y+.5)*s,s*.42,now);
-    lv.items.forEach(it=>{if(Z.bag.has(it.e))return;const cx=(it.x+.5)*s,cy=(it.y+.5)*s;circle(ctx,cx,cy,s*.34,'rgba(255,255,255,.12)');ctx.fillStyle='#000';ctx.font=Math.round(s*.48)+'px sans-serif';ctx.fillText(it.e,cx,cy+Math.sin(now/400+it.x)*s*.03);});
+    lv.items.forEach(it=>{if(Z.bag.has(it.e))return;const cx=(it.x+.5)*s,cy=(it.y+.5)*s;circle(ctx,cx,cy,s*.34,'rgba(255,255,255,.12)');ctx.fillStyle='#000';glyph(it.e,cx,cy+Math.sin(now/400+it.x)*s*.03,s*.48);});
   }else if(id==='owlpost'){
     ctx.fillStyle='#e9edc9';ctx.fillRect(0,0,W,W);for(let y=0;y<n;y++)for(let x=0;x<n;x++)if((x*5+y*3)%4===0)circle(ctx,(x+.3)*s,(y+.7)*s,s*.05,'#ccd5ae');
     drawTrail(s,'rgba(108,88,76,.2)');drawWalls(lv.g,n,s,'#6c584c');
     drawOwlery(ctx,.5*s,.5*s,s*.42);
-    lv.perches.forEach(p=>{ctx.font=Math.round(s*.55)+'px sans-serif';ctx.fillText('🌳',(p.x+.5)*s,(p.y+.5)*s);});
+    lv.perches.forEach(p=>{glyph('🌳',(p.x+.5)*s,(p.y+.5)*s,s*.55);});
     lv.towers.forEach(t=>{const cx=(t.x+.5)*s,cy=(t.y+.5)*s,done=!Z.letters.has(t.c);ctx.fillStyle='#adb5bd';ctx.fillRect(cx-s*.2,cy-s*.25,s*.4,s*.6);ctx.fillStyle=OWLC[t.c];ctx.beginPath();ctx.moveTo(cx-s*.3,cy-s*.25);ctx.lineTo(cx,cy-s*.5);ctx.lineTo(cx+s*.3,cy-s*.25);ctx.fill();
-      if(done){ctx.font=Math.round(s*.35)+'px sans-serif';ctx.fillText('✅',cx,cy+s*.08);}else{ctx.fillStyle=OWLC[t.c];ctx.fillRect(cx-s*.12,cy-s*.05,s*.24,s*.16);ctx.strokeStyle='#ffffff';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx-s*.12,cy-s*.05);ctx.lineTo(cx,cy+s*.04);ctx.lineTo(cx+s*.12,cy-s*.05);ctx.stroke();}});
+      if(done){glyph('✅',cx,cy+s*.08,s*.35);}else{ctx.fillStyle=OWLC[t.c];ctx.fillRect(cx-s*.12,cy-s*.05,s*.24,s*.16);ctx.strokeStyle='#ffffff';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx-s*.12,cy-s*.05);ctx.lineTo(cx,cy+s*.04);ctx.lineTo(cx+s*.12,cy-s*.05);ctx.stroke();}});
   }else if(id==='flykeys'){
     const gr=ctx.createLinearGradient(0,0,W,W);gr.addColorStop(0,'#e0c3fc');gr.addColorStop(1,'#8ec5fc');ctx.fillStyle=gr;ctx.fillRect(0,0,W,W);
     for(let y=0;y<n;y++)for(let x=0;x<n;x++)if(lv.t[y][x]){const X=x*s,Y=y*s;ctx.fillStyle='#6c757d';ctx.fillRect(X+s*.22,Y+s*.05,s*.56,s*.9);ctx.fillStyle='#adb5bd';ctx.fillRect(X+s*.15,Y+s*.02,s*.7,s*.14);ctx.fillRect(X+s*.15,Y+s*.84,s*.7,s*.14);}
@@ -211,7 +211,7 @@ function wzDraw2(s,n,W,now){
   const id=G.W.id,lv=G.lv,Z=G.wz;ctx.textAlign='center';ctx.textBaseline='middle';
   if(id==='broom'){const cx=(G.vis.x+.5)*s,cy=(G.vis.y+.5)*s+s*.3;ctx.strokeStyle='#8d5524';ctx.lineWidth=Math.max(2,s*.08);ctx.beginPath();ctx.moveTo(cx-s*.45,cy);ctx.lineTo(cx+s*.35,cy-s*.05);ctx.stroke();
     ctx.fillStyle='#e9c46a';ctx.beginPath();ctx.moveTo(cx-s*.4,cy);ctx.lineTo(cx-s*.65,cy-s*.15);ctx.lineTo(cx-s*.65,cy+s*.15);ctx.fill();
-    if(!Z.flying){ctx.globalAlpha=.6+.4*Math.sin(now/200);ctx.font=Math.round(s*.4)+'px sans-serif';ctx.fillText('➡️',cx+s*.7,cy-s*.3);ctx.globalAlpha=1;}}
+    if(!Z.flying){ctx.globalAlpha=.6+.4*Math.sin(now/200);glyph('➡️',cx+s*.7,cy-s*.3,s*.4);ctx.globalAlpha=1;}}
   if(id==='potion'&&Z.brewed){ctx.globalAlpha=.35+.2*Math.sin(now/200);circle(ctx,(G.vis.x+.5)*s,(G.vis.y+.5)*s,s*.5,'#7bf1a8');ctx.globalAlpha=1;}
   if(id==='flykeys'){Z.keys.forEach(k=>{const [x,y]=glide(k,k.x,k.y),cx=(x+.5)*s,cy=(y+.5)*s+Math.sin(now/150+k.c)*s*.06,flap=Math.abs(Math.sin(now/90+k.c));
       ctx.fillStyle='rgba(255,255,255,.85)';ctx.beginPath();ctx.ellipse(cx-s*.2,cy-s*.12,s*.16,s*.08*flap+1,-.4,0,7);ctx.ellipse(cx+s*.2,cy-s*.12,s*.16,s*.08*flap+1,.4,0,7);ctx.fill();

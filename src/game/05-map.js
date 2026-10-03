@@ -161,12 +161,12 @@ function rollPrize(){
 document.getElementById('giftBtn').onclick=openGiftModal;
 document.getElementById('gOpen').onclick=()=>{
   const bx=document.getElementById('gbox');bx.classList.add('shake');document.getElementById('gOpen').hidden=true;
-  [523,587,659].forEach((f,i)=>setTimeout(()=>beep(f,.1),i*160));
+  chime([523,587,659],160,.1);
   setTimeout(()=>{
     boxes.opened++;save('journey_boxes',boxes);
     const [h,t]=rollPrize();bx.hidden=true;document.getElementById('gPrize').hidden=false;
     document.getElementById('gHead').textContent=h;document.getElementById('gText').textContent=t;
-    [784,988,1175,1568].forEach((f,i)=>setTimeout(()=>beep(f,.15),i*90));speak(h+' '+t);
+    chime([784,988,1175,1568],90,.15);speak(h+' '+t);
     const cl=document.getElementById('gClose');cl.hidden=false;cl.textContent=giftsLeft()>0?'עוד תיבה! 🎁':'איזה כיף!';cl.focus();
   },matchMedia('(prefers-reduced-motion: reduce)').matches?100:1500);
 };
@@ -242,6 +242,6 @@ document.getElementById('bkApply').onclick=async()=>{const o=await bkRead(docume
   const keys=Object.keys(o.d);if(!bkSure){bkSure=true;b.textContent='בטוח? להחליף ✅';bkSay('⚠️ הגיבוי מ־'+new Date(o.t).toLocaleDateString('he-IL')+' יחליף את כל ההתקדמות בטלפון הזה. לחצי שוב כדי לאשר.');return;}
   try{const old=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(/^(p\d+_)?journey_/.test(k))old.push(k);}old.forEach(k=>localStorage.removeItem(k));keys.forEach(k=>localStorage.setItem(k,o.d[k]));}
   catch(e){bkSay('😮 לא הצלחתי לשמור כאן ('+e.name+')');return;}
-  bkSay('🎉 ההתקדמות הועברה! טוענים מחדש…',true);[523,659,784].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*100));setTimeout(()=>location.reload(),900);};
+  bkSay('🎉 ההתקדמות הועברה! טוענים מחדש…',true);chime([523,659,784],100,.1,'sine');setTimeout(()=>location.reload(),900);};
 document.getElementById('nightBtn').onclick=()=>{night=!night;save('journey_night',night);applyNight();renderMap();};
 

@@ -28,7 +28,7 @@ function renderShop(){
       if(!owned){
         if(have>=I.price){b.className='buy';b.textContent='⭐ '+I.price+' · לקנות';
           b.onclick=()=>{shop.spent+=I.price;shop.owned.push(I.id);(shop.equip[C.id]=shop.equip[C.id]||{})[S.id]=I.id;saveShop();setTimeout(checkMedals,400);
-            [660,880,1100].forEach((f,i)=>setTimeout(()=>beep(f,.12),i*90));renderShop();};}
+            chime([660,880,1100],90,.12);renderShop();};}
         else{b.textContent='חסרים '+(I.price-have)+' ⭐';b.disabled=true;}
       }else if(on){b.textContent='להוריד';b.onclick=()=>{delete shop.equip[C.id][S.id];saveShop();renderShop();};}
       else{b.textContent='ללבוש';b.onclick=()=>{(shop.equip[C.id]=shop.equip[C.id]||{})[S.id]=I.id;saveShop();beep(880,.1);renderShop();};}

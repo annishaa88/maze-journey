@@ -197,6 +197,8 @@ function resize(){
 
 let audio;
 function beep(f,d,type){if(muted)return;try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f;o.type=type||'triangle';g.gain.setValueAtTime(.14,audio.currentTime);g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+d);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+d);}catch(e){}}
+// a little tune: notes one after another, `gap` ms apart, each `d` seconds long
+function chime(notes,gap,d,type){notes.forEach((f,i)=>setTimeout(()=>beep(f,d,type),i*gap));}
 let toastT,tip='';
 const TIPS={ice:'בכל לחיצה מחליקים עד שנתקעים. אפשר להקיש על המבוך או להחליק באצבע.',castle:'כל מפתח פותח את הדלת בצבע שלו.',sea:'בועה ממלאת אוויר. דג ישן 💤 לא מפריע.',jungle:'גשר נופל אחרייך. קוף ישן 💤 לא מפריע.',space:'פורטל מעביר לפורטל באותו צבע.',candy:'לחצן 🔘 מחליף בין השערים הוורודים לתכולים.',farm:'אספי את כל האפרוחים והביאי אותם לתרנגולת.',rainbow:'עוברים רק על רצפה בצבע שלך.',toys:'דוחפים ארגז אחד בכל פעם. אפשר לחזור צעד אחורה.',forest:'פטרייה סגולה 🍄 הופכת את החצים. עוד פטרייה מחזירה אותם.',beach:'גל מכסה חלק מהחול. מחכים שהמים יירדו ורצים!',mirror:'הבבואה זזה הפוך ימינה-שמאלה. מי שמגיעה למראה שלה מחכה שם.',haunt:'הפנס נחלש עם כל צעד. סוללה 🔋 ממלאת אותו. רוח ישנה 💤 לא מפריעה.',numbers:'עולים על התשובה הנכונה כדי לעבור. טעית? לא נורא, נסי שוב.',english:'עונים על השאלה ועולים על התשובה הנכונה. כשהתשובות ארוכות, הן מופיעות למעלה בצבעים.',hebrew:'עונים על השאלה ועולים על התשובה הנכונה. כשהתשובות ארוכות, הן מופיעות למעלה בצבעים.',logic:'חושבים רגע, ואז עולים על המשבצת של התשובה הנכונה.',
   tilt:'כל לחיצה מטה את הלוח והכול מתגלגל. סלע יכול לעצור אותך! 💡 ↩',shadow:'אל תחזרי בעקבות שלך, שם הצל! 👣',floors:'▲ עולה לאותו מקום בקומה שמעל. ▼ יורדת.',escape:'אספי רמזים 📜, פתרי, והקלידי את הקוד בדלת 🔐',
@@ -311,7 +313,7 @@ function enter(x,y){
   const st=G.lv.sticker;
   if(st&&st!=='end'&&st[0]===x&&st[1]===y&&!stickers.has(G.w+'-'+G.l)){
     stickers.add(G.w+'-'+G.l);saveStickers();G.gotSticker=true;
-    [988,1319,1568].forEach((f,i)=>setTimeout(()=>beep(f,.12,'sine'),i*80));toast('מצאת מדבקה '+WORLDS[G.w].stickers[G.l]+'! היא כבר באלבום.');checkMedals();
+    chime([988,1319,1568],80,.12,'sine');toast('מצאת מדבקה '+WORLDS[G.w].stickers[G.l]+'! היא כבר באלבום.');checkMedals();
   }
 }
 function buzz(ms){try{if(navigator.vibrate)navigator.vibrate(ms);}catch(e){}}
@@ -380,7 +382,7 @@ function move0(dir){
     if(pi>G.qi){bumpWall(d);toast('קודם עני על השאלה שלמעלה');return;}
     if(pi>=0&&pi===G.qi){
       const q=G.lv.qs[pi];if(G.qTries===0&&!G.duel){const sk=STATKEY[G.W.id];stats[sk]=(stats[sk]||0)+1;save('journey_stats',stats);}
-      G.qi++;G.qTries=0;G.qGlow=false;[660,880,1175].forEach((f,i)=>setTimeout(()=>beep(f,.12),i*80));buzz(15);
+      G.qi++;G.qTries=0;G.qGlow=false;chime([660,880,1175],80,.12);buzz(15);
       toast(G.qi>=G.lv.qs.length?'✓ נכון! \u2066'+disp(q.ans)+'\u2069 · כל הכבוד, עכשיו אל '+G.W.goalName+' 🏆':'✓ נכון! \u2066'+disp(q.ans)+'\u2069');
       showQuiz(true);updateHud();setTimeout(checkMedals,500);}
     if(G.cfg.kind==='wallet'&&nx===G.lv.goal.x&&ny===G.lv.goal.y&&Math.abs(G.sum-G.lv.target)>1e-9){
@@ -412,7 +414,7 @@ function move0(dir){
   G.p.x=nx;G.p.y=ny;enter(nx,ny);
   if(G.W.id==='castle'){
     const ki=G.keysLeft.findIndex(k=>k.x===nx&&k.y===ny);
-    if(ki>=0){const k=G.keysLeft.splice(ki,1)[0];G.keys.add(k.c);[660,990].forEach((f,i)=>setTimeout(()=>beep(f,.15),i*110));toast('מצאת את המפתח ה'+KEYC[k.c].m+'!');updateHud();}
+    if(ki>=0){const k=G.keysLeft.splice(ki,1)[0];G.keys.add(k.c);chime([660,990],110,.15);toast('מצאת את המפתח ה'+KEYC[k.c].m+'!');updateHud();}
   }
   if(G.W.id==='sea'){
     G.air--;
@@ -429,7 +431,7 @@ function move0(dir){
       showQuiz(false);updateHud();}
   }
   if(G.W.id==='forest'&&G.lv.mush.some(m=>m.x===nx&&m.y===ny)){
-    G.flip=!G.flip;G.flipLock=performance.now()+450;stopRun();stopHolding();[523,392,659].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*70));buzz(20);
+    G.flip=!G.flip;G.flipLock=performance.now()+450;stopRun();stopHolding();chime([523,392,659],70,.1,'sine');buzz(20);
     toast(G.flip?'🍄 הופ! החצים התהפכו':'🍄 פיו, החצים חזרו לרגיל');updateHud();
   }
   if(G.W.id==='beach'&&!G.lv.tides.some(q=>q.x===nx&&q.y===ny))G.lastDry={x:nx,y:ny};
@@ -446,7 +448,7 @@ function move0(dir){
   if(G.W.id==='farm'){
     const ci=G.chicksLeft.findIndex(c=>c.x===nx&&c.y===ny);
     if(ci>=0){const c=G.chicksLeft.splice(ci,1)[0];G.followers.push(c);G.hist.push({x:nx,y:ny});
-      [1200,1500].forEach((f,i)=>setTimeout(()=>beep(f,.08,'sine'),i*90));toast('ציף ציף! אפרוח הצטרף 🐣');updateHud();}
+      chime([1200,1500],90,.08,'sine');toast('ציף ציף! אפרוח הצטרף 🐣');updateHud();}
     fishHit();
     if(atGoal()&&G.chicksLeft.length){beep(300,.15);toast('התרנגולת מחכה לעוד '+G.chicksLeft.length+' אפרוחים');return;}
   }
@@ -457,7 +459,7 @@ function move0(dir){
   if(G.W.id==='space'){
     for(const pt of G.lv.portals){
       let to=null;if(pt.a.x===nx&&pt.a.y===ny)to=pt.b;else if(pt.b.x===nx&&pt.b.y===ny)to=pt.a;
-      if(to){G.p={x:to.x,y:to.y};G.trail.add(to.x+','+to.y);[500,800,1100].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*60));
+      if(to){G.p={x:to.x,y:to.y};G.trail.add(to.x+','+to.y);chime([500,800,1100],60,.1,'sine');
         bump('portals');if(!G.warped){toast('וווש! עברת בפורטל 🌀');G.warped=true;}break;}
     }
   }
@@ -527,7 +529,7 @@ function win(){
   setTimeout(()=>speak(title+' '+text+stickerNote),500);
   setTimeout(checkMedals,700);
   {const par=parOf();if(par!=null&&!G.duel){const mv=movesOf(),rt=document.createElement('p');rt.className='route';
-    if(mv<=par){const first=!route[key];route[key]=1;save('journey_route',route);rt.textContent='🏅 הדרך הכי קצרה! '+mv+' מהלכים'+(first?'':' (שוב!)');rt.classList.add('got');setTimeout(()=>[1047,1319,1568].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*90)),1500);}
+    if(mv<=par){const first=!route[key];route[key]=1;save('journey_route',route);rt.textContent='🏅 הדרך הכי קצרה! '+mv+' מהלכים'+(first?'':' (שוב!)');rt.classList.add('got');setTimeout(()=>chime([1047,1319,1568],90,.1,'sine'),1500);}
     else rt.textContent='👣 סיימת ב־'+mv+' מהלכים. אפשר גם ב־'+par+' ולקבל 🏅';
     const old=document.querySelector('#win .route');if(old)old.remove();document.getElementById('winText').after(rt);}
    else{const old=document.querySelector('#win .route');if(old)old.remove();}}
@@ -542,7 +544,7 @@ function win(){
       winTimer=setInterval(()=>{if(G!==myG||document.getElementById('win').hidden||pausedAt){clearInterval(winTimer);nb.textContent=label;return;}
         left--;if(left<=0){clearInterval(winTimer);startLevel(next[0],next[1]);}else nb.textContent=label+' ▸ '+left;},1000);}}
   document.getElementById('win').hidden=false;winConfetti();
-  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.2),i*120));
+  chime([523,659,784,1047],120,.2);
   confetti=Array.from({length:70},(_,i)=>({x:Math.random(),y:-Math.random()*.5,v:.004+Math.random()*.006,c:['#ff5d8f','#ffc23c','#5bb8e8','#7b5ea7','#1a9ba1'][i%5],r:.012+Math.random()*.012}));
   (next?nb:document.getElementById('winMap')).focus();
 }

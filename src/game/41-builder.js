@@ -212,13 +212,13 @@ const BTIPS={1:'🏰 בטירה: שמים 🚪 דלת על הקו בין שני 
 let bCo=null,bTipNow=null;
 function bCoachStart(){bCo={i:0,f:{}};bTipNow=null;while(bCo.i<BCOACH.length&&BCOACH[bCo.i].done(bEd,bCo.f))bCo.i++;bCoachEnter();}
 function bCoachEnter(){
-  if(bCo.i>=BCOACH.length){bCo.final=true;const t='כל הכבוד! 🎉 בנית מבוך! רוצה עוד? ב"✨ מיוחדים" יש מפתחות, פורטלים ויצורים, וב"🎨 קישוט" צבעים ופרחים.';speak(t);[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*100));return;}
+  if(bCo.i>=BCOACH.length){bCo.final=true;const t='כל הכבוד! 🎉 בנית מבוך! רוצה עוד? ב"✨ מיוחדים" יש מפתחות, פורטלים ויצורים, וב"🎨 קישוט" צבעים ופרחים.';speak(t);chime([523,659,784,1047],100,.1,'sine');return;}
   const st=BCOACH[bCo.i];if(st.tab){bTab=st.tab;bTool=st.tool;bPend=null;}speak(st.t);
 }
 function bCoachCheck(){
   if(!bCo||bCo.final||!bEd)return;let moved=false;
   while(bCo.i<BCOACH.length&&BCOACH[bCo.i].done(bEd,bCo.f)){bCo.i++;moved=true;}
-  if(moved){[784,988].forEach((f,i)=>setTimeout(()=>beep(f,.08,'sine'),i*90));bCoachEnter();renderBuild();}
+  if(moved){chime([784,988],90,.08,'sine');bCoachEnter();renderBuild();}
 }
 function bCoachFlag(k){if(bCo&&!bCo.final){bCo.f[k]=true;}}
 function bShowTip(key){if(bCo&&!bCo.final)return;const seen=load('journey_btips',{});if(seen[key]||!BTIPS[key])return;bTipNow=key;speak(BTIPS[key]);}
@@ -367,7 +367,7 @@ function bPlay(d,fam){
 }
 function bWin(){
   const fam=bPlayFam?famLoad().find(f=>f.id===bPlayFam):null,d=fam?bNorm(fam.m):myMazes.find(m=>m.id===bPlaying),sec=Math.round((Date.now()-G.t0)/100)/10;let rec='';
-  sparkle(G.lv.goal.x,G.lv.goal.y,['#ffd23f','#ff5d8f'],18);[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.12,'sine'),i*110));
+  sparkle(G.lv.goal.x,G.lv.goal.y,['#ffd23f','#ff5d8f'],18);chime([523,659,784,1047],110,.12,'sine');
   if(!fam&&d&&G.got===3&&(d.best==null||sec<d.best)){rec=d.best!=null?' 🏆 שיא חדש!':'';d.best=sec;bSave();}
   document.getElementById('drTitle').textContent=fam&&fam.target?(sec<=fam.target&&G.got===3?'עמדת באתגר! 🏆':'כמעט! 💪'):'עברת את המבוך! 🎉';
   const rows=document.getElementById('drRows');rows.innerHTML='';rows.style.gridTemplateColumns='1fr';
@@ -464,7 +464,7 @@ document.getElementById('giveUp').onclick=()=>{if(G&&G.duel&&G.started&&!G.done)
 function duelTurnEnd(gave){
   const sec=Math.round((Date.now()-G.t0)/10)/100;
   D.res[D.turn]={stars:gave?0:G.got,sec,gave};
-  [523,659,784].forEach((f,i)=>setTimeout(()=>beep(f,.15),i*110));
+  chime([523,659,784],110,.15);
   if(D.turn===0){
     const r=D.res[0];
     showRes(D.players[0].name+(r.gave?' ויתרה':' סיימה!'),[0],r.gave?'עכשיו התור של '+D.players[1].name+'.':'היא אספה '+r.stars+' כוכבים ב־'+fmt(r.sec)+'. עכשיו התור של '+D.players[1].name+'!','לתור של '+D.players[1].name+' ▶',()=>{D.turn=1;beginTurn();});
@@ -509,7 +509,7 @@ function finalRes(){
   document.querySelectorAll('#drRows span').forEach((el,i)=>{if(i%2===0)el.textContent='🏅 '+D.wins[i/2]+' סיבובים';});
   if(win>=0){dancer=D.players[win].char;}
   confetti=Array.from({length:70},(_,i)=>({x:Math.random(),y:-Math.random()*.5,v:.004+Math.random()*.006,c:['#ff5d8f','#ffc23c','#5bb8e8','#7b5ea7','#1a9ba1'][i%5],r:.012+Math.random()*.012}));
-  [523,659,784,1047,1319].forEach((f,i)=>setTimeout(()=>beep(f,.2),i*130));
+  chime([523,659,784,1047,1319],130,.2);
 }
 document.getElementById('drMap').onclick=toMap;
 

@@ -35,9 +35,9 @@ function arcMove(d){
     if(toGoal&&G.dots.size){bumpWall(d);arcSay('השער נפתח אחרי כל הנקודות. נשארו עוד '+G.dots.size);return;}
     G.p={x:nx,y:ny};enter(nx,ny);const k=nx+','+ny;
     if(G.dots.delete(k)){G.score+=10;G.dotsEaten++;beep(G.dots.size%2?520:700,.04,'square');
-      if(!G.dots.size){toast('אכלת את כל הנקודות! השער אל הדובדבנים פתוח 🍒');[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.1,'square'),i*80));}}
+      if(!G.dots.size){toast('אכלת את כל הנקודות! השער אל הדובדבנים פתוח 🍒');chime([523,659,784,1047],80,.1,'square');}}
     const pi=G.powerLeft.findIndex(p=>p.x===nx&&p.y===ny);
-    if(pi>=0){G.powerLeft.splice(pi,1);G.powerUntil=performance.now()+G.cfg.powerMs;G.score+=50;[400,600,800,1000].forEach((f,i)=>setTimeout(()=>beep(f,.07,'square'),i*50));
+    if(pi>=0){G.powerLeft.splice(pi,1);G.powerUntil=performance.now()+G.cfg.powerMs;G.score+=50;chime([400,600,800,1000],50,.07,'square');
       toast('תות כוח! 🍓 עכשיו הבלובים בורחים ממך. תפסי אותם!');}
     blobHit();updateHud();if(atGoal())win();return;
   }
@@ -49,7 +49,7 @@ function arcMove(d){
     G.snUndo.push({p:{x,y},body:G.body.map(c=>c.slice()),fruits:new Set(G.fruitsLeft),stars:new Set(G.stars),got:G.got});
     const eat=G.fruitsLeft.delete(k);
     G.body=GEN.snakeStep(G.body,nx,ny,eat);G.p={x:nx,y:ny};enter(nx,ny);
-    if(eat){[700,900].forEach((f,i)=>setTimeout(()=>beep(f,.08,'square'),i*70));G.score+=100;
+    if(eat){chime([700,900],70,.08,'square');G.score+=100;
       toast(G.fruitsLeft.size?'ממם! 🍏 הזנב גדל':'כל הפירות נאכלו! עכשיו אל הקן 🪺');}
     else beep(330,.03,'square');
     updateHud();if(atGoal()){win();return;}
@@ -78,12 +78,12 @@ function arcMove(d){
     if(d===0&&lv.t[y][x]!==2){ladJump();return;}   // no ladder here: up means jump
     const r=GEN.ladStep(lv.t,n,x,y,d);
     if(!r){bumpWall(d);if(d===0)arcSay('עולים רק בסולם 🪜');else if(d===2)arcSay('יורדים רק בסולם, או נופלים בחור');return;}
-    if(r.length>1){G.anim={cells:r,i:0,t:0,ms:70};[500,400,300].forEach((f,i)=>setTimeout(()=>beep(f,.06,'square'),i*60));return;}
+    if(r.length>1){G.anim={cells:r,i:0,t:0,ms:70};chime([500,400,300],60,.06,'square');return;}
     G.p={x:r[0][0],y:r[0][1]};enter(G.p.x,G.p.y);beep(d===0||d===2?440:360,.03,'square');barrelHit();if(atGoal())win();return;
   }
   if(id==='mines'){
     if(!inside){bumpWall(d);return;}
-    if(lv.hole[ny][nx]){G.holesShown.add(nx+','+ny);[300,220,150].forEach((f,i)=>setTimeout(()=>beep(f,.12,'sine'),i*90));
+    if(lv.hole[ny][nx]){G.holesShown.add(nx+','+ny);chime([300,220,150],90,.12,'sine');
       arcHurt('נפלת לבור של חפרפרת! 🕳️ עכשיו את יודעת איפה הוא. חוזרים להתחלה',lv.start);return;}
     G.p={x:nx,y:ny};enter(nx,ny);const was=G.known.size;minesFlood(lv,G.known,nx,ny);
     beep(G.known.size-was>1?760:520,.05,'square');updateHud();if(atGoal())win();return;
@@ -105,7 +105,7 @@ function wander(list,canGo,chase,flee){
 function blobHit(){
   const now=performance.now();
   for(const b of G.blobs){if(b.x!==G.p.x||b.y!==G.p.y)continue;
-    if(now<G.powerUntil){b.x=b.hx;b.y=b.hy;b.last=-1;G.score+=200;[1200,1600].forEach((f,i)=>setTimeout(()=>beep(f,.08,'square'),i*60));toast('הבלוב רץ הביתה! 💨');updateHud();continue;}
+    if(now<G.powerUntil){b.x=b.hx;b.y=b.hy;b.last=-1;G.score+=200;chime([1200,1600],60,.08,'square');toast('הבלוב רץ הביתה! 💨');updateHud();continue;}
     arcHurt('אופס! בלוב תפס אותך. חוזרים להתחלה, והנקודות שאכלת נשארות אכולות',G.lv.start,true);return;}
 }
 function foeHit(){
@@ -123,7 +123,7 @@ function ladJump(){
   const ok=a=>a>=0&&a<n&&lv.t[y][a]!==1;
   let tx=x+2*dir;if(!ok(x+dir))tx=x;else if(!ok(tx))tx=x+dir;
   G.jump={fx:x,tx,y,t0:performance.now(),dur:tx===x?420:560};
-  [520,780,1040].forEach((f,i)=>setTimeout(()=>beep(f,.06,'square'),i*45));
+  chime([520,780,1040],45,.06,'square');
 }
 function ladLand(){
   const j=G.jump,lv=G.lv;G.jump=null;G.p={x:j.tx,y:j.y};enter(j.tx,j.y);
@@ -145,7 +145,7 @@ function explode(){
     if(G.crack.delete(x+','+y)){broke++;break;}}
   G.boomed+=broke;G.score+=broke*50;
   G.blast={cells,until:performance.now()+550};
-  [260,180,120].forEach((f,i)=>setTimeout(()=>beep(f,.16,'sawtooth'),i*70));buzz(50);
+  chime([260,180,120],70,.16,'sawtooth');buzz(50);
   const inB=(x,y)=>cells.some(c=>c[0]===x&&c[1]===y);
   const before=G.foes.length;G.foes=G.foes.filter(f=>!inB(f.x,f.y));
   if(G.foes.length<before){G.score+=300;setTimeout(()=>toast('פוף! 🎈 הבלון התפוצץ'),150);}
@@ -226,13 +226,13 @@ function deepMove(d){
 function deepArrive(){
   if(!G||G.done)return;const lv=G.lv,now=performance.now();
   const bi=G.boostsLeft.findIndex(b=>b.x===G.p.x&&b.y===G.p.y);
-  if(bi>=0){G.boostsLeft.splice(bi,1);G.fastUntil=now+9000;[700,900,1100,1300].forEach((f,i)=>setTimeout(()=>beep(f,.06,'sine'),i*40));
+  if(bi>=0){G.boostsLeft.splice(bi,1);G.fastUntil=now+9000;chime([700,900,1100,1300],40,.06,'sine');
     toast('⚡ צדף מהירות! עכשיו כל לחיצה שוחה עד הפנייה הבאה');updateHud();}
   const pad=lv.pads.find(p=>p.x===G.p.x&&p.y===G.p.y);
   if(pad){const tx=pad.x+2*DV[pad.d][0],ty=pad.y+2*DV[pad.d][1];stopRun();
     G.jump={fx:pad.x,fy:pad.y,tx,ty,t0:now,dur:650,land:()=>{G.jump=null;G.p={x:tx,y:ty};enter(tx,ty);G.check={x:tx,y:ty};
       beep(330,.08,'sine');if(!G.padTold){G.padTold=true;toast('בּוֹיְנְג! 🐚 עפת מעל הקיר. מעכשיו המערבולת תחזיר אותך לכאן');}deepArrive();}};
-    [300,450,700,1000].forEach((f,i)=>setTimeout(()=>beep(f,.07,'square'),i*50));return;}
+    chime([300,450,700,1000],50,.07,'square');return;}
   if(spikeOut(G.p.x,G.p.y)){deepHurt('אאוץ׳! 🦔 קוצים. המערבולת מחזירה אותך');return;}
   deepMonsterHit();
   if(atGoal())win();
@@ -240,7 +240,7 @@ function deepArrive(){
 function deepHurt(text){
   const now=performance.now();if(G.swirl||now<G.hurtUntil)return;
   G.swirl={t0:now,x:G.p.x,y:G.p.y};G.hits=(G.hits||0)+1;stopRun();G.anim=null;G.pend=false;G.fastUntil=0;
-  [600,500,400,300,200].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*90));buzz(40);toast(text);updateHud();
+  chime([600,500,400,300,200],90,.1,'sine');buzz(40);toast(text);updateHud();
 }
 function deepMonsterHit(){
   if(G.jump||G.swirl)return;
@@ -410,7 +410,7 @@ function arcDraw2(s,n,W,now){
   if(id==='deep'){deepDraw2(s,n,W,now);return;}
   const K=kitHook('draw2');if(K){K(s,n,W,now);return;}
   const lock=left=>{if(!left)return;const X=lv.goal.x*s,Y=lv.goal.y*s;ctx.fillStyle='rgba(20,15,40,.45)';rrect(ctx,X+s*.08,Y+s*.08,s*.84,s*.84,s*.14);ctx.fill();
-    ctx.font=Math.round(s*.42)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🔒',X+s/2,Y+s*.52);};
+    glyph('🔒',X+s/2,Y+s*.52,s*.42,1);};
   if(id==='munch'){lock(G.dots.size);const sc=now<G.powerUntil,fl=sc&&G.powerUntil-now<1800&&Math.floor(now/160)%2;
     G.blobs.forEach(b=>{const [x,y]=glide(b,b.x,b.y);drawBlob(ctx,(x+.5)*s,(y+.55)*s,s*.4,BLOBC[b.c],sc,fl,now);});}
   if(id==='snake'){lock(G.fruitsLeft.size);

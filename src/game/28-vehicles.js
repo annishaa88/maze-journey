@@ -30,11 +30,11 @@ function vhMove(d){
   if(id==='firetruck'){
     const fi=V.fires.findIndex(f=>f.x===nx&&f.y===ny);
     if(fi>=0){if(V.tank<=0){bumpWall(d);arcSay('אין מים! 💧 מלאי בברז כיבוי או בתחנה');return;}
-      V.tank--;V.fires.splice(fi,1);sparkle(nx,ny,['#4cc9f0','#ffffff','#90e0ef'],18);[300,500,700].forEach((f,i)=>setTimeout(()=>beep(f,.1,'sine'),i*80));
+      V.tank--;V.fires.splice(fi,1);sparkle(nx,ny,['#4cc9f0','#ffffff','#90e0ef'],18);chime([300,500,700],80,.1,'sine');
       toast(V.fires.length?'פשש! 💦 האש כבתה. עוד '+V.fires.length+' 🔥':'כל השריפות כבו! 🚒 חוזרים לתחנה');}
     vhStep(nx,ny,d);beep(500,.03,'sine');
     const atW=(nx===lv.start.x&&ny===lv.start.y)||lv.hydrants.some(h=>h.x===nx&&h.y===ny);
-    if(atW&&V.tank<lv.cap){V.tank=lv.cap;[880,1100].forEach((f,i)=>setTimeout(()=>beep(f,.08,'sine'),i*70));arcSay('המיכל מלא! 💧');}
+    if(atW&&V.tank<lv.cap){V.tank=lv.cap;chime([880,1100],70,.08,'sine');arcSay('המיכל מלא! 💧');}
     updateHud();if(!V.fires.length&&atGoal())win();return;
   }
   if(id==='schoolbus'){
@@ -43,7 +43,7 @@ function vhMove(d){
     if(nx===lv.goal.x&&ny===lv.goal.y&&V.kids<lv.stops.length){bumpWall(d);arcSay('קודם אוספים את כל הילדים 🧒 עכשיו תחנה '+(V.kids+1));return;}
     vhStep(nx,ny,d);beep(500,.03,'sine');
     const st=lv.stops.find(s=>s.x===nx&&s.y===ny);
-    if(st){if(st.i===V.kids){V.kids++;sparkle(nx,ny,['#ffd23f','#ffffff'],12);[784,988].forEach((f,i)=>setTimeout(()=>beep(f,.08,'sine'),i*70));
+    if(st){if(st.i===V.kids){V.kids++;sparkle(nx,ny,['#ffd23f','#ffffff'],12);chime([784,988],70,.08,'sine');
         toast(V.kids<lv.stops.length?KIDS[st.i%KIDS.length]+' עלה לאוטובוס! עכשיו תחנה '+(V.kids+1)+' 🚏':'כולם באוטובוס! 🚌 לבית הספר 🏫');updateHud();}
       else if(st.i>V.kids)arcSay('קודם תחנה '+(V.kids+1)+' 🚏 הילדים מחכים לפי הסדר');}
     if(atGoal())win();return;
@@ -57,7 +57,7 @@ function vhMove(d){
     vhStep(nx,ny,d);beep(520+(V.boost?200:0),.03,'sine');
     const slide=()=>{const a=G.p.x,b=G.p.y;if(lv.g[b][a][d])return false;vhStep(a+DV[d][0],b+DV[d][1],d);return true;};
     if(V.boost>0){V.boost--;slide();fxAdd({k:'ring',x:G.p.x,y:G.p.y,col:'#ffd23f',life:400});}
-    if(lv.turbo.some(t=>t.x===G.p.x&&t.y===G.p.y)){V.boost=4;[660,990,1320].forEach((f,i)=>setTimeout(()=>beep(f,.07,'sine'),i*50));toast('⚡ טורבו! ארבע קפיצות כפולות');}
+    if(lv.turbo.some(t=>t.x===G.p.x&&t.y===G.p.y)){V.boost=4;chime([660,990,1320],50,.07,'sine');toast('⚡ טורבו! ארבע קפיצות כפולות');}
     if(lv.oil.some(o=>o.x===G.p.x&&o.y===G.p.y)){V.spin=performance.now()+900;V.spins=(V.spins||0)+1;beep(220,.2,'sawtooth');arcSay('אופס, שמן! 🛢️ המכונית מסתובבת רגע');}
     updateHud();if(atGoal()&&!V.lost){toast('ניצחת במרוץ! 🏆');win();}return;
   }
@@ -74,7 +74,7 @@ function vhTick(now){
     else{V.wait=true;beep(520,.1,'triangle');arcSay('צומת! 🛤️ לאן נוסעים? לחצי חץ');updateHud();return;}
     const nx=x+DV[V.dir][0],ny=y+DV[V.dir][1];V.hist.unshift({x,y});V.hist.length=Math.min(V.hist.length,6);vhStep(nx,ny,V.dir);beep(300,.025,'triangle');
     const ci=V.cargo.findIndex(c=>c.x===nx&&c.y===ny);
-    if(ci>=0){V.cargo.splice(ci,1);V.loaded++;sparkle(nx,ny,['#bc8a5f','#ffd23f'],12);[700,900].forEach((f,i)=>setTimeout(()=>beep(f,.08,'sine'),i*70));
+    if(ci>=0){V.cargo.splice(ci,1);V.loaded++;sparkle(nx,ny,['#bc8a5f','#ffd23f'],12);chime([700,900],70,.08,'sine');
       toast(V.cargo.length?'📦 הועמס! עוד '+V.cargo.length:'כל המטען על הרכבת! 🚉 לתחנה');}
     updateHud();
     if(atGoal()){if(!V.cargo.length){V.going=false;win();}else arcSay('התחנה מחכה למטען 📦 עוד '+V.cargo.length);}
@@ -175,15 +175,15 @@ function vhDraw(s,n,W,now){
     lv.stops.forEach(st=>{if(st.i<V.kids)return;const cx=(st.x+.5)*s,cy=(st.y+.5)*s,next=st.i===V.kids;
       ctx.fillStyle='#6c757d';ctx.fillRect(cx+s*.22,cy-s*.32,s*.05,s*.6);circle(ctx,cx+s*.245,cy-s*.32,s*.12,next?'#ffb703':'#adb5bd');
       ctx.fillStyle='#2a2140';ctx.font='bold '+Math.round(s*.17)+'px sans-serif';ctx.fillText(st.i+1,cx+s*.245,cy-s*.31);
-      ctx.font=Math.round(s*.46)+'px sans-serif';ctx.fillText(KIDS[st.i%KIDS.length],cx-s*.08,cy+s*.06+(next?Math.sin(now/200)*s*.04:0));});}
+      glyph(KIDS[st.i%KIDS.length],cx-s*.08,cy+s*.06+(next?Math.sin(now/200)*s*.04:0),s*.46);});}
   else if(id==='train'){
     ctx.fillStyle='#b7e4c7';ctx.fillRect(0,0,W,W);for(let y=0;y<n;y++)for(let x=0;x<n;x++)if((x*7+y*3)%5===0){ctx.fillStyle='#95d5b2';ctx.fillRect(x*s+s*.1,y*s+s*.7,s*.12,s*.06);}
     vhRails(s,n,lv);
     V.cargo.forEach(c=>{const cx=(c.x+.5)*s,cy=(c.y+.5)*s;ctx.font=Math.round(s*.46)+'px sans-serif';ctx.fillStyle='#000';ctx.fillText('📦',cx,cy+Math.sin(now/300+c.x)*s*.03);});
-    if(V.wait){const x=G.p.x,y=G.p.y;[0,1,2,3].forEach(d=>{if(lv.g[y][x][d]||d===OPP_D[V.dir])return;ctx.globalAlpha=.55+.4*Math.sin(now/150);ctx.font=Math.round(s*.42)+'px sans-serif';ctx.fillText(ARW[d],(x+.5+DV[d][0]*.75)*s,(y+.5+DV[d][1]*.75)*s);ctx.globalAlpha=1;});}
+    if(V.wait){const x=G.p.x,y=G.p.y;[0,1,2,3].forEach(d=>{if(lv.g[y][x][d]||d===OPP_D[V.dir])return;ctx.globalAlpha=.55+.4*Math.sin(now/150);glyph(ARW[d],(x+.5+DV[d][0]*.75)*s,(y+.5+DV[d][1]*.75)*s,s*.42);ctx.globalAlpha=1;});}
     // the wagons follow the engine; the loaded ones carry a crate
     const wn=Math.max(1,lv.cargo.length);for(let i=Math.min(wn,V.hist.length)-1;i>=0;i--){const h=V.hist[i],cx=(h.x+.5)*s,cy=(h.y+.5)*s;ctx.fillStyle='#8d5524';rrect(ctx,cx-s*.32,cy-s*.22,s*.64,s*.44,s*.08);ctx.fill();
-      circle(ctx,cx-s*.2,cy+s*.24,s*.07,'#2a2140');circle(ctx,cx+s*.2,cy+s*.24,s*.07,'#2a2140');if(i<V.loaded){ctx.font=Math.round(s*.32)+'px sans-serif';ctx.fillText('📦',cx,cy);}}
+      circle(ctx,cx-s*.2,cy+s*.24,s*.07,'#2a2140');circle(ctx,cx+s*.2,cy+s*.24,s*.07,'#2a2140');if(i<V.loaded){glyph('📦',cx,cy,s*.32);}}
     vhLoco((G.vis.x+.5)*s,(G.vis.y+.5)*s,s,V.dir,now);}
   else if(id==='parking'){
     ctx.fillStyle='#495057';ctx.fillRect(0,0,W,W);ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=Math.max(1,s*.03);
@@ -214,7 +214,7 @@ function vhDraw(s,n,W,now){
     lv.turbo.forEach(t=>{const cx=(t.x+.5)*s,cy=(t.y+.5)*s;ctx.fillStyle='#ffd23f';ctx.globalAlpha=.7+.3*Math.sin(now/120);for(let i=0;i<2;i++){ctx.beginPath();ctx.moveTo(cx-s*.25+i*s*.2,cy-s*.2);ctx.lineTo(cx-s*.05+i*s*.2,cy);ctx.lineTo(cx-s*.25+i*s*.2,cy+s*.2);ctx.lineTo(cx-s*.15+i*s*.2,cy);ctx.fill();}ctx.globalAlpha=1;});
     const [rx,ry]=lv.rival[V.ri],rv=V.rvis||(V.rvis={x:rx,y:ry});rv.x+=(rx-rv.x)*.25;rv.y+=(ry-rv.y)*.25;
     ctx.save();ctx.translate((rv.x+.5)*s,(rv.y+.5)*s);ctx.fillStyle='#2a9d8f';rrect(ctx,-s*.4,-s*.08,s*.8,s*.36,s*.1);ctx.fill();ctx.fillStyle='#ffffff';ctx.fillRect(-s*.04,-s*.08,s*.08,s*.36);
-    circle(ctx,-s*.25,s*.3,s*.1,'#2a2140');circle(ctx,s*.25,s*.3,s*.1,'#2a2140');ctx.font=Math.round(s*.3)+'px sans-serif';ctx.fillText('🐢',0,-s*.2);ctx.restore();}
+    circle(ctx,-s*.25,s*.3,s*.1,'#2a2140');circle(ctx,s*.25,s*.3,s*.1,'#2a2140');glyph('🐢',0,-s*.2,s*.3);ctx.restore();}
   if(id!=='train'&&id!=='parking'){const sp=id==='race'&&V.spin&&now<V.spin;if(sp){ctx.save();ctx.translate((G.vis.x+.5)*s,(G.vis.y+.5)*s);ctx.rotate(((V.spin-now)/900)*Math.PI*2);ctx.translate(-(G.vis.x+.5)*s,-(G.vis.y+.5)*s);}
     vhBody((G.vis.x+.5)*s,(G.vis.y+.5)*s,s,id,V.face,now);if(sp)ctx.restore();}
 }
