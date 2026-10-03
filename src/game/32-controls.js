@@ -12,7 +12,7 @@ function stopHolding(){clearInterval(padRep);padRep=null;if(G)G.flipHold=true;sx
 document.addEventListener('keydown',e=>{
   const m={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'}[e.key];
   if((e.key==='r'||e.key==='R'||e.key==='ר')&&G&&isBK()&&!document.getElementById('gameScreen').hidden){bkRotate();return;}
-  if((e.key===' '||e.key==='b'||e.key==='Enter')&&G&&['bomb','ladders','hoops','hurdles','match3','blocks','match3b','blockscore','parking'].includes(G.W.id)&&!document.getElementById('gameScreen').hidden){e.preventDefault();arcAction();return;}
+  if((e.key===' '||e.key==='b'||e.key==='Enter')&&G&&G.W.ui&&G.W.ui.key&&!document.getElementById('gameScreen').hidden){e.preventDefault();arcAction();return;}
   if(m&&!document.getElementById('gameScreen').hidden){e.preventDefault();if(e.repeat&&(G&&G.wz&&G.wz.casting))return;if(e.repeat&&G&&G.flipHold)return;if(!e.repeat&&G)G.flipHold=false;stopRun();move(m);}
 });
 document.addEventListener('keyup',()=>{if(G)G.flipHold=false;});
@@ -21,7 +21,7 @@ function stopRun(){clearTimeout(runT);runT=null;}
 // tap on the board: walk that way along the corridor until a turn, a wall or something to pick up
 function run(dir){
   stopRun();if(!G)return;
-  if(!G.lv.g||['candy','forest','mirror','wand','stairs','owlpost','train','schoolbus','lights'].includes(G.W.id)){move(dir);return;}
+  if(!G.lv.g||(G.W.ui&&G.W.ui.step)){move(dir);return;}
   const lvl=G;let steps=0;
   const step=()=>{
     if(G!==lvl||G.done){stopRun();return;}
@@ -47,7 +47,7 @@ cv.addEventListener('pointerup',e=>{
   if(sx!=null&&!swiped&&G&&!G.done){
     const cm=G.lv.view&&G.cam?G.cam:null,r=cv.getBoundingClientRect(),cs=r.width/(cm?G.lv.view:G.lv.n);
     const tx=(e.clientX-r.left)/cs-.5+(cm?cm.x:0),ty=(e.clientY-r.top)/cs-.5+(cm?cm.y:0),dx=tx-G.p.x,dy=ty-G.p.y;
-    if(Math.max(Math.abs(dx),Math.abs(dy))<.5&&['bomb','ladders','hoops','hurdles'].includes(G.W.id))arcAction();
+    if(Math.max(Math.abs(dx),Math.abs(dy))<.5&&G.W.ui&&G.W.ui.tapMe)arcAction();
     else if(Math.max(Math.abs(dx),Math.abs(dy))>=.5&&!(G&&G.wz&&G.wz.casting))run(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'));
   }
   sx=null;

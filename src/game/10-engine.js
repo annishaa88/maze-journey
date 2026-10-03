@@ -46,8 +46,9 @@ function startLevelNow(w,l,opt){
   document.getElementById('board').style.boxShadow='0 6px 0 '+W.deep;
   document.getElementById('medalPop').classList.add('top');
   document.querySelector('#gameScreen .bar').style.background='linear-gradient(100deg,'+W.hex+','+W.deep+')';
-  document.getElementById('hintBtn').hidden=!['parking','ice','soccer','golf','dojo','tilt','sheep','paint','gravity','carpet','lagoon','match3','blocks','match3b','blockscore'].includes(W.id);
-  document.getElementById('undoBtn').hidden=!['parking','toys','snake','soccer','tilt','sheep','paint'].includes(W.id);{const a=document.getElementById('act');a.hidden=!['bomb','ladders','hoops','hurdles','memory','spell','carpet','match3','blocks','match3b','blockscore','wand','parking'].includes(W.id);a.textContent={parking:'🔄',ladders:'🦘',hurdles:'🦘',hoops:'🏀',memory:'👁️',spell:'🔊',carpet:'🪔',match3:'🔄',blocks:'🧩',match3b:'🔄',blockscore:'🧩',wand:'🪄'}[W.id]||'🎆';a.setAttribute('aria-label',{parking:'מכונית אחרת',ladders:'לקפוץ',hurdles:'לקפוץ',hoops:'לזרוק',memory:'להציץ',spell:'להשמיע את המילה',carpet:'משאלה',match3:'לבחור סוכרייה',blocks:'לשים את הצורה',match3b:'לבחור סוכרייה',blockscore:'לשים את הצורה',wand:'להטיל לחש'}[W.id]||'לשים זיקוק');}
+  {const U=W.ui||{},a=document.getElementById('act');
+    document.getElementById('hintBtn').hidden=!U.hint;document.getElementById('undoBtn').hidden=!U.undo;
+    a.hidden=!U.act;a.textContent=U.act?U.act[0]:'🎆';a.setAttribute('aria-label',U.act?U.act[1]:'לשים זיקוק');}
   const C=curChar();
   const hints={
     ice:'עזרי ל'+C.name+' להחליק אל בית הקרח. בכל לחיצה מחליקים עד הסוף! נתקעת? יש כפתור רמז.',

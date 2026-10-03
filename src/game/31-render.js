@@ -287,7 +287,7 @@ function frame(now){
     ctx.globalAlpha=.3;circle(ctx,(G.vis.x+.5)*s,(G.vis.y+.5)*s,s*.46,'#ff5d8f');ctx.globalAlpha=1;
   }
   fxDraw(s,now);
-  const blink=PZ.has(G.W.id)||G.W.id==='parking'||now<G.hurtUntil&&Math.floor(now/120)%2;
+  const blink=(G.W.ui&&G.W.ui.still)||now<G.hurtUntil&&Math.floor(now/120)%2;
   if(!blink){
     // alive: a little breathing bob when standing, a lean and a stretch while hopping
     const calm=calmFx(),still=dist<.02&&!G.jump,bob=calm||!still?0:Math.sin(now/420)*s*.025,lean=calm?0:Math.max(-.22,Math.min(.22,(G.p.x-G.vis.x)*.6)),st=calm?0:Math.sin(Math.min(1,dist)*Math.PI)*.1;
