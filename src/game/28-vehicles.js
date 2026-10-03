@@ -93,10 +93,12 @@ function vhHud(add){
   const id=G.W.id,lv=G.lv,V=G.vh;
   if(id==='firetruck'){add('🔥 '+V.fires.length);const s=add('💧 '+'●'.repeat(V.tank)+'○'.repeat(Math.max(0,lv.cap-V.tank)));if(!V.tank){s.style.background='#ffd6d6';s.style.color='#2a2140';}}
   if(id==='schoolbus')add('🧒 '+V.kids+'/'+lv.stops.length+(V.kids<lv.stops.length?' · 🚏 '+(V.kids+1):' · 🏫'));
-  if(id==='train'){add('📦 '+V.loaded+'/'+lv.cargo.length);if(!V.going)add('חץ = יציאה 🚂');else if(V.wait)add('🛤️ לאן?');else if(V.q!=null)add('בפנייה הבאה '+ARW[V.q]);}
+  if(id==='train'){add('📦 '+V.loaded+'/'+lv.cargo.length);
+    // one status chip that is always there, so the top row never jumps
+    const st=add(!V.going?'חץ = יציאה 🚂':V.wait?'🛤️ לאן?':V.q!=null?'בפנייה הבאה '+ARW[V.q]:'🚂 נוסעים');st.style.minWidth='8.5em';}
   if(id==='parking')add('🚗 מהלכים: '+V.moves+' · אפשר ב־'+lv.best);
   if(id==='lights')add('🚦 עוברים בירוק');
-  if(id==='race'){add(V.go?(V.lost?'😮 הפסד':'🏁 מרוץ!'):'⏳ מוכנים…');if(V.boost)add('⚡ '+V.boost);}
+  if(id==='race'){add(V.go?(V.lost?'😮 הפסד':'🏁 מרוץ!'):'⏳ מוכנים…').style.minWidth='6em';const b=add('⚡ '+(V.boost||0));if(!V.boost)b.style.opacity='.45';}
 }
 /* ---------- the parking puzzle: tap or drag a car, or choose with 🔄 and slide with the arrows ---------- */
 function pkFree(cars,i,v){const c=cars[i],g=pkGridR(cars);for(let k=0;k<c.len;k++){const X=c.h?v+k:c.x,Y=c.h?c.y:v+k;if(X<0||Y<0||X>=6||Y>=6)return false;const o=g[Y][X];if(o>=0&&o!==i)return false;}return true;}
