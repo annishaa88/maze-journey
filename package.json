@@ -1,0 +1,13 @@
+{
+  "name": "maze-journey",
+  "private": true,
+  "description": "מסע המבוכים – a maze game for kids, one HTML file",
+  "scripts": {
+    "build": "node tools/build.js --app",
+    "test": "tests/run.sh quick",
+    "test:full": "tests/run.sh full",
+    "golden": "node tests/fingerprint.js --save"
+  },
+  "dependencies": { "terser": "^5.51.2" },
+  "devDependencies": { "playwright": "*" }
+}
