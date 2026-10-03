@@ -108,7 +108,7 @@ function pkTry(i,dv,quiet){
   V.undo.push(V.cars.map(q=>Object.assign({},q)));if(V.undo.length>80)V.undo.shift();
   if(c.h)c.x=v;else c.y=v;const key=i+':'+Math.sign(dv);if(V.last!==key){V.moves++;V.last=key;}V.hint=null;beep(440+i*30,.03,'sine');
   if(i===0&&c.x+c.len===6){V.out={t0:performance.now()};const opt=G.lv.best;G.got=V.moves<=opt+1?3:V.moves<=Math.round(opt*1.6)+2?2:1;G.stars=new Set();
-    [523,659,784,1047].forEach((f,k)=>setTimeout(()=>beep(f,.1,'sine'),k*90));toast('יצאת מהחניון! 🚗💨');updateHud();const g0=G;setTimeout(()=>{if(G===g0&&!G.done)win();},900);}
+    chime([523,659,784,1047],90,.1,'sine');toast('יצאת מהחניון! 🚗💨');updateHud();const g0=G;setTimeout(()=>{if(G===g0&&!G.done)win();},900);}
   else updateHud();return true;
 }
 function pkArrow(d){
@@ -184,7 +184,9 @@ function vhDraw(s,n,W,now){
     V.cargo.forEach(c=>{const cx=(c.x+.5)*s,cy=(c.y+.5)*s;ctx.font=Math.round(s*.46)+'px sans-serif';ctx.fillStyle='#000';ctx.fillText('📦',cx,cy+Math.sin(now/300+c.x)*s*.03);});
     if(V.wait){const x=G.p.x,y=G.p.y;[0,1,2,3].forEach(d=>{if(lv.g[y][x][d]||d===OPP_D[V.dir])return;ctx.globalAlpha=.55+.4*Math.sin(now/150);glyph(ARW[d],(x+.5+DV[d][0]*.75)*s,(y+.5+DV[d][1]*.75)*s,s*.42);ctx.globalAlpha=1;});}
     // the wagons follow the engine; the loaded ones carry a crate
-    const wn=Math.max(1,lv.cargo.length);for(let i=Math.min(wn,V.hist.length)-1;i>=0;i--){const h=V.hist[i],cx=(h.x+.5)*s,cy=(h.y+.5)*s;ctx.fillStyle='#8d5524';rrect(ctx,cx-s*.32,cy-s*.22,s*.64,s*.44,s*.08);ctx.fill();
+    const wn=Math.max(1,lv.cargo.length),e=1-Math.min(1,Math.hypot(G.vis.x-G.p.x,G.vis.y-G.p.y));
+    // each wagon rolls from its old cell to its new one together with the engine, instead of hopping
+    for(let i=Math.min(wn,V.hist.length)-1;i>=0;i--){const h=V.hist[i],o=V.hist[i+1]||h,hx=h.x+(o.x-h.x)*(1-e),hy=h.y+(o.y-h.y)*(1-e),cx=(hx+.5)*s,cy=(hy+.5)*s;ctx.fillStyle='#8d5524';rrect(ctx,cx-s*.32,cy-s*.22,s*.64,s*.44,s*.08);ctx.fill();
       circle(ctx,cx-s*.2,cy+s*.24,s*.07,'#2a2140');circle(ctx,cx+s*.2,cy+s*.24,s*.07,'#2a2140');if(i<V.loaded){glyph('📦',cx,cy,s*.32);}}
     vhLoco((G.vis.x+.5)*s,(G.vis.y+.5)*s,s,V.dir,now);}
   else if(id==='parking'){
@@ -193,7 +195,10 @@ function vhDraw(s,n,W,now){
     // the way out
     ctx.fillStyle='#52b788';ctx.fillRect(W-s*.08,PK_ROWV*s+s*.08,s*.08,s*.84);ctx.fillStyle='#ffffff';ctx.font='bold '+Math.round(s*.22)+'px sans-serif';
     ctx.save();ctx.translate(W-s*.28,PK_ROWV*s+s*.5);ctx.globalAlpha=.6+.3*Math.sin(now/250);ctx.fillText('➡',0,0);ctx.restore();ctx.globalAlpha=1;
-    V.cars.forEach((c,i)=>{let X=c.x*s,Y=c.y*s;if(i===0&&V.out)X+=Math.min(1,(now-V.out.t0)/800)*s*3;const w=(c.h?c.len:1)*s,h=(c.h?1:c.len)*s,m=s*.08;
+    // cars slide to their new place instead of jumping there
+    const k=Math.min(1,(G.dt||16)/70);
+    V.cars.forEach((c,i)=>{if(c.vx==null||calmFx()){c.vx=c.x;c.vy=c.y;}c.vx+=(c.x-c.vx)*k;c.vy+=(c.y-c.vy)*k;if(Math.abs(c.x-c.vx)<.01)c.vx=c.x;if(Math.abs(c.y-c.vy)<.01)c.vy=c.y;
+      let X=c.vx*s,Y=c.vy*s;if(i===0&&V.out)X+=Math.min(1,(now-V.out.t0)/800)*s*3;const w=(c.h?c.len:1)*s,h=(c.h?1:c.len)*s,m=s*.08;
       const hl=V.hint&&V.hint.i===i&&now<V.hint.until&&Math.floor(now/180)%2;
       if(i===V.sel){ctx.fillStyle='rgba(255,255,255,.5)';rrect(ctx,X+m*.3,Y+m*.3,w-m*.6,h-m*.6,s*.2);ctx.fill();}
       ctx.fillStyle=hl?'#ffffff':PKC[c.c];rrect(ctx,X+m,Y+m,w-2*m,h-2*m,s*.18);ctx.fill();
