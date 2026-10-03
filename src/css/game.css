@@ -182,7 +182,9 @@ body.focus.land .ginfo{grid-area:info;min-height:0}
 .gname{display:flex;align-items:center;gap:6px;font-family:var(--display);font-size:1.05rem;color:var(--ink);line-height:1.2}
 .gname canvas{width:26px;height:26px;flex:none}
 body.focus .ginfo .msg{position:static;transform:none;min-height:0;max-width:100%;padding:3px 12px;font-size:.92rem;pointer-events:none;box-shadow:none}
-body.focus .ginfo .msg.hot{box-shadow:0 3px 10px rgba(0,0,0,.18);font-weight:700;animation:popIn .25s ease-out}
+/* the message sits in the page, so it grows in place; sliding it would push the page and make it jump */
+@keyframes msgIn{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+body.focus .ginfo .msg.hot{box-shadow:0 3px 10px rgba(0,0,0,.18);font-weight:700;animation:msgIn .2s ease-out}
 body.focus .ginfo .msg:empty{display:none}
 .quiz{background:var(--card);border:3px solid #f3722c;border-radius:18px;padding:8px 14px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;text-align:center;box-shadow:0 4px 0 #b8521a}
 .quiz span{font-size:1rem;color:var(--soft)}
@@ -369,7 +371,6 @@ body.focus #win .btns .big{font-size:1.3rem;padding:14px 30px}
 @keyframes slideUp{from{transform:translate(-50%,140%)}to{transform:translate(-50%,0)}}
 .medal-pop b{font-family:var(--display);font-weight:400;font-size:1.1rem;display:block}
 .medal-pop span{font-size:.9rem;color:var(--soft)}
-@keyframes popIn{from{transform:translate(-50%,30px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
 .medal-pop{animation:slideUp .35s ease-out}
 @media (prefers-reduced-motion:reduce){.medal-pop{animation:none}}
 .reset{display:flex;flex-direction:column;align-items:center;gap:10px;padding-block:8px}
