@@ -317,6 +317,6 @@ function pzDraw2(s,n,W,now){
     ctx.lineWidth=Math.max(4,s*.18);ctx.strokeStyle='#5a189a';ctx.strokeText(P.text,0,0);ctx.fillStyle='#ffd23f';ctx.fillText(P.text,0,0);ctx.restore();}
   if(isBK()){const k=G.k;if(k.lastPts&&now-k.lastPts.t0<900){const e=(now-k.lastPts.t0)/900;ctx.globalAlpha=1-e;ctx.font='bold '+Math.round(s*.6)+'px sans-serif';ctx.fillStyle='#ffffff';ctx.textAlign='center';ctx.fillText('+'+k.lastPts.v,W/2,W*.62-e*s);ctx.globalAlpha=1;}}
 }
-kit(PZ,ftWrap({move:pzMove,action:pzAction,hint:pzHint,pointer:pzPointer,draw:pzDraw,draw2:()=>{},
+kit(PZ,ftWrap({move:pzMove,action:pzAction,hint:pzHint,pointer:pzPointer,draw:pzDraw,draw2:pzDraw2,
   tick:now=>{if(isM3())m3Tick(now);else if(isBK()&&!G.k.tray.length)bkDeal();},
   hud:add=>{if(isBK()&&!G.k.tray.length)bkDeal();pzHud(add);}}));
