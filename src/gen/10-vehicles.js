@@ -92,3 +92,51 @@ function race(cfg){
   return {g,n,start:{x:0,y:0},goal:{x:gx,y:gy},turbo,oil,rival:rp,stars:pickStars(n,3,used),best:path.length-1};
 }
 
+/* --- sky flight: fly through the clouds; a gust 💨 blows the plane one square onward; pop every balloon, then land --- */
+// one move of the plane: [x, y, balloons-mask] after the move (and after any gust), or null when a cloud is in the way
+function planeStep(lv,x,y,m,d){
+  if(lv.g[y][x][d])return null;let nx=x+DV[d][0],ny=y+DV[d][1];
+  const grab=(a,b)=>{lv.balloons.forEach((q,i)=>{if(q.x===a&&q.y===b)m|=1<<i;});};
+  const full=(1<<lv.balloons.length)-1;
+  if(nx===lv.goal.x&&ny===lv.goal.y&&m!==full)return null;   // the runway waits for the balloons
+  grab(nx,ny);const w=lv.winds.find(q=>q.x===nx&&q.y===ny);
+  if(w){nx+=DV[w.d][0];ny+=DV[w.d][1];grab(nx,ny);}
+  return [nx,ny,m];
+}
+// shortest flight from (x,y,m) to a landing; also tells which states can still land (so she can never get stuck)
+function planeSolve(lv,x,y,m){
+  const n=lv.n,full=(1<<lv.balloons.length)-1,key=(a,b,c)=>(c*n+b)*n+a,prev=new Map([[key(x,y,m),null]]),q=[[x,y,m]],edges=[];
+  let end=null;
+  for(let h=0;h<q.length;h++){const [a,b,c]=q[h],k=key(a,b,c);if(a===lv.goal.x&&b===lv.goal.y&&c===full){if(!end)end=k;continue;}
+    for(let d=0;d<4;d++){const r=planeStep(lv,a,b,c,d);if(!r)continue;const nk=key(r[0],r[1],r[2]);edges.push([k,nk]);if(prev.has(nk))continue;prev.set(nk,[k,d]);q.push(r);}}
+  const path=[];if(end!=null){let k=end;while(prev.get(k)){path.unshift(prev.get(k)[1]);k=prev.get(k)[0];}}
+  // states from which a landing is still possible
+  const back=new Map();edges.forEach(([a,b])=>{if(!back.has(b))back.set(b,[]);back.get(b).push(a);});
+  const good=new Set(end!=null?[end]:[]),st=[...good];while(st.length){const k=st.pop();for(const a of back.get(k)||[])if(!good.has(a)){good.add(a);st.push(a);}}
+  return {path:end!=null?path:null,seen:[...prev.keys()],good,cells:new Set(q.map(([a,b])=>a+','+b))};
+}
+function plane(cfg){
+  const n=cfg.n;let fb=null;
+  for(let tries=0;tries<(cfg.wind>0?50:200);tries++){
+    const g=maze(n);addLoops(g,n,cfg.loops);const r0=bfs(g,n,0,0);const [gx,gy]=farthest(r0.dist,n);
+    const used=new Set(['0,0',gx+','+gy]);
+    const balloons=spreadPick(allCells(n).filter(([x,y])=>r0.dist[y][x]>=3),cfg.balloons,used,Math.max(2,Math.floor(n/2))).map(([x,y])=>({x,y}));
+    // gusts sit on open squares and blow toward an open side; never onto another gust, the start or the runway
+    const winds=[],at=new Set(),to=new Set();
+    for(const [x,y] of shuffle(allCells(n))){if(winds.length>=cfg.wind)break;const k=x+','+y;if(used.has(k)||x+y<2||to.has(k))continue;
+      const ds=shuffle([0,1,2,3].filter(d=>!g[y][x][d]));
+      const d=ds.find(d=>{const t=(x+DV[d][0])+','+(y+DV[d][1]);return !at.has(t)&&t!=='0,0'&&t!==gx+','+gy;});if(d==null)continue;
+      winds.push({x,y,d});at.add(k);to.add((x+DV[d][0])+','+(y+DV[d][1]));used.add(k);}
+    const stars=pickStars(n,3,used);
+    const lv={g,n,start:{x:0,y:0},goal:{x:gx,y:gy},balloons,winds,stars};
+    const R=planeSolve(lv,0,0,0);if(!R.path)continue;
+    // she must never get stuck, and every star must be reachable
+    if(R.seen.some(k=>!R.good.has(k)))continue;
+    if(!stars.every(([x,y])=>R.cells.has(x+','+y)))continue;
+    stars.rest=stars.rest.filter(([x,y])=>R.cells.has(x+','+y));   // the sticker hides only where she can fly
+    lv.best=R.path.length;
+    if(winds.length>=cfg.wind)return lv;if(!fb||winds.length>fb.winds.length)fb=lv;
+  }
+  // a crowded sky that never works out: try again with one gust fewer (no gusts at all always works)
+  return fb||plane(Object.assign({},cfg,{wind:cfg.wind-1}));
+}

@@ -710,6 +710,7 @@ const CHARS=[
   {id:'walrus',name:'ניבתנית',draw:drawWalrus,unlock:'train'},
   {id:'crab',name:'סרטנית',draw:drawCrab,unlock:'parking'},
   {id:'cone',name:'קונוסית',draw:drawCone,unlock:'lights'},
-  {id:'pug',name:'פאגית',draw:drawPug,unlock:'race'}
+  {id:'pug',name:'פאגית',draw:drawPug,unlock:'race'},
+  {id:'pelican',name:'שקנאית טייסת',draw:drawPelican,unlock:'plane'}
 ];
 

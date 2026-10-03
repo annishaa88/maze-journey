@@ -35,6 +35,7 @@ const ARC_TUNE={
   train:(c,up,k,sg)=>{c.n=Math.max(5,c.n+sg);c.cargo=Math.max(1,c.cargo+sg);c.speed=Math.round(c.speed*(up?(k===2?.75:.88):1.25));return c;},
   parking:(c,up,k,sg)=>{c.lo=Math.max(1,c.lo+2*sg);c.hi=Math.max(c.lo+1,c.hi+2*sg);c.cars=Math.max(3,Math.min(12,c.cars+sg));return c;},
   lights:(c,up,k,sg)=>{c.n=Math.max(5,c.n+sg);c.lights=Math.max(1,c.lights+sg);c.period=Math.round(c.period*(up?(k===2?.8:.9):1.2));return c;},
+  plane:(c,up,k,sg)=>{c.n=Math.max(5,c.n+sg);c.wind=Math.max(1,c.wind+(up?k:-1));return c;},
   race:(c,up,k,sg)=>{c.n=Math.max(5,c.n+sg);c.speed=Math.round(c.speed*(up?(k===2?.78:.88):1.3));return c;},
   match3:(c,up,k,sg)=>{c.moves=up?Math.max(10,c.moves-3*k):c.moves+6;if(!up)c.colors=Math.max(4,c.colors-1);if(k===2)c.colors=Math.min(6,c.colors+1);return c;},
   blocks:(c,up,k,sg)=>{c.lines=Math.max(2,c.lines+2*sg);if(!up)c.pool=c.pool==='huge'?'big':'small';return c;},

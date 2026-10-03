@@ -287,7 +287,11 @@ const WORLDS=[
   {id:'race',name:'מרוץ המכוניות',short:'מרוץ',rule:'3, 2, 1… צאו! מגיעים לדגל 🏁 לפני המכונית הירוקה. ⚡ טורבו = קפיצות כפולות. 🛢️ שמן = המכונית מסתובבת רגע, אז עדיף לעקוף.',
    color:'#c1121f',hex:'#ef476f',deep:'#9d0208',goal:drawFinishFlag,goalName:'קו הסיום',
    levels:[{n:6,loops:4,turbo:1,oil:1,speed:950},{n:7,loops:5,turbo:1,oil:2,speed:860},{n:8,loops:6,turbo:2,oil:2,speed:780},{n:9,loops:7,turbo:2,oil:3,speed:720},{n:10,loops:8,turbo:2,oil:3,speed:660},{n:11,loops:9,turbo:3,oil:4,speed:600}],
-   stickers:['🏎️','🏆','🥇','🛞','🧤','🎖️']}
+   stickers:['🏎️','🏆','🥇','🛞','🧤','🎖️']},
+  {id:'plane',ui:{hint:1,undo:1},name:'טיסה בשמיים',short:'טיסה',rule:'טסים בין העננים ☁️ ואוספים את כל הבלונים 🎈, ואז נוחתים על המסלול 🛬. זהירות: רוח 💨 מעיפה את המטוס משבצת אחת לכיוון החץ שלה!',
+   color:'#219ebc',hex:'#4cc9f0',deep:'#126782',goal:drawRunway,goalName:'מסלול הנחיתה',
+   levels:[{n:6,loops:3,wind:2,balloons:1},{n:7,loops:4,wind:3,balloons:2},{n:8,loops:5,wind:4,balloons:2},{n:9,loops:6,wind:5,balloons:3},{n:10,loops:7,wind:7,balloons:3},{n:11,loops:8,wind:9,balloons:4}],
+   stickers:['✈️','🧳','🛫','🪂','🎫','🧭']}
 ];
 // world indexes from world ids (a world's index is its save key, so worlds are only ever added at the end)
 function wids(...a){return a.map(id=>{const i=WORLDS.findIndex(W=>W.id===id);if(i<0)throw new Error('no world '+id);return i;});}
