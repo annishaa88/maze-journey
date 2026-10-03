@@ -5,7 +5,7 @@ const {assemble}=require('./assemble');
 // test hooks: expose internals to the test page only
 function testPage(s){
   const hook=(a,b)=>{if(!s.includes(a))throw new Error('hook point missing: '+a);s=s.replace(a,b);};
-  hook('function win(){','window.__win=()=>win();window.__start=(w,l)=>startLevel(w,l);window.__G=()=>G;window.__D={drawChar,CHARS,drawCrown};window.__frame=frame;window.__T={WORLDS,GEN,tune,setDiff:v=>{diff=v;},place:()=>placeBomb(),clue:(v,g)=>clueExpr(v,g)};function win(){');
+  hook('function win(){','window.__win=()=>win();window.__start=(w,l)=>startLevel(w,l);window.__G=()=>G;window.__D={drawChar,CHARS,drawCrown};window.__frame=frame;window.__R={TAGS,TIPS,TUT,ARC_TUNE,KITS,REGIONS,CHARS,MEDALS};window.__T={WORLDS,GEN,tune,setDiff:v=>{diff=v;},place:()=>placeBomb(),clue:(v,g)=>clueExpr(v,g)};function win(){');
   hook('function bWin(){','window.__B={bCheck,bSolve,bLevel,bEncode,bDecode,get ed(){return bEd;}};function bWin(){');
   return s;}
 async function shrink(s){
