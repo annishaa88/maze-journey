@@ -35,17 +35,15 @@ function run(dir){
   };
   step();
 }
-cv.addEventListener('pointerdown',e=>{if(G&&G.W.id==='parking'&&!G.done){vhPointer('down',e);return;}if(G&&PZ.has(G.W.id)&&!G.done){pzPointer('down',e);return;}sx=e.clientX;sy=e.clientY;swiped=false;stopRun();if(G)G.flipHold=false;});
+cv.addEventListener('pointerdown',e=>{{const P=kitHook('pointer');if(P&&!G.done){P('down',e);return;}}sx=e.clientX;sy=e.clientY;swiped=false;stopRun();if(G)G.flipHold=false;});
 cv.addEventListener('pointermove',e=>{
-  if(G&&G.W.id==='parking'&&!G.done){vhPointer('move',e);return;}
-  if(G&&PZ.has(G.W.id)&&!G.done){pzPointer('move',e);return;}
+  {const P=kitHook('pointer');if(P&&!G.done){P('move',e);return;}}
   if(sx==null||!G)return;const dx=e.clientX-sx,dy=e.clientY-sy,th=Math.max(24,cv.getBoundingClientRect().width/(G.lv.view||G.lv.n)*.6);
   if(Math.abs(dx)>th||Math.abs(dy)>th){swiped=true;move(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'));
     if(G.W.id==='ice'||(G&&G.wz&&G.wz.casting))sx=null;else{sx=e.clientX;sy=e.clientY;}}
 });
 cv.addEventListener('pointerup',e=>{
-  if(G&&G.W.id==='parking'&&!G.done){vhPointer('up',e);return;}
-  if(G&&PZ.has(G.W.id)&&!G.done){pzPointer('up',e);return;}
+  {const P=kitHook('pointer');if(P&&!G.done){P('up',e);return;}}
   if(sx!=null&&!swiped&&G&&!G.done){
     const cm=G.lv.view&&G.cam?G.cam:null,r=cv.getBoundingClientRect(),cs=r.width/(cm?G.lv.view:G.lv.n);
     const tx=(e.clientX-r.left)/cs-.5+(cm?cm.x:0),ty=(e.clientY-r.top)/cs-.5+(cm?cm.y:0),dx=tx-G.p.x,dy=ty-G.p.y;
@@ -90,7 +88,7 @@ document.getElementById('coinsBtn').onclick=()=>{
   G.coinsLeft=G.lv.coins.map(c=>Object.assign({},c));G.sum=0;beep(500,.08,'sine');toast('המטבעות חזרו למקום. אפשר לנסות שוב 🙂');showQuiz(false);updateHud();
 };
 document.getElementById('undoBtn').onclick=()=>{
-  if(vhUndo())return;if(nwUndo())return;
+  {const U=kitHook('undo');if(U&&U())return;}
   if(G&&G.W.id==='tilt'&&!G.done&&!G.anim){const u=G.tiltUndo.pop();if(!u)return;G.p=u.p;G.bpos=u.bs;G.tiltA=null;G.tilts=Math.max(0,G.tilts-1);beep(500,.08,'sine');updateHud();return;}
   if(G&&G.W.id==='soccer'&&!G.done&&!G.roll){const u=G.spUndo.pop();if(!u)return;G.p=u.p;G.ball=u.ball;G.kicks=Math.max(0,G.kicks-1);beep(500,.08,'sine');updateHud();return;}
   if(G&&G.W.id==='snake'&&!G.done){const u=G.snUndo.pop();if(!u)return;G.p=u.p;G.body=u.body;G.fruitsLeft=u.fruits;G.stars=u.stars;G.got=u.got;beep(500,.08,'sine');updateHud();return;}
@@ -98,7 +96,7 @@ document.getElementById('undoBtn').onclick=()=>{
   const u=G.undo.pop();G.p=u.p;G.boxes=u.boxes;beep(500,.08,'sine');updateHud();
 };
 document.getElementById('hintBtn').onclick=()=>{
-  if(vhHint()||nwHint()||ftHint()||pzHint())return;
+  {const H=kitHook('hint');if(H&&H())return;}
   if(G&&G.W.id==='tilt'&&!G.done&&!G.anim){const lv=G.lv,R=GEN.tiltSolve(lv.t,lv.n,G.p,G.bpos,lv.goal,60000);
     if(!R.won){toast('מכאן אי אפשר להגיע. לחצי ↩ צעד אחורה');return;}G.hint={d:R.sol[0],until:performance.now()+1800};return;}
   if(G&&(G.W.id==='golf'||G.W.id==='dojo')&&!G.done&&!G.roll){const lv=G.lv,n=lv.n,golfy=G.W.id==='golf';

@@ -320,4 +320,4 @@ function spDraw2(s,n,W,now){
   if(id==='ski'&&performance.now()<G.stunUntil){ctx.font=Math.round(s*.4)+'px sans-serif';ctx.textAlign='center';ctx.fillText('💫',(G.vis.x+.5)*s,(G.vis.y)*s);}
   if(id==='hurdles'&&G.stuck){ctx.font=Math.round(s*.35)+'px sans-serif';ctx.textAlign='center';ctx.fillText('💦',(G.vis.x+.75)*s,(G.vis.y+.2)*s);}
 }
-
+kit(SPORT,{move:spMove,tick:spTick,hud:spHud,draw:spDraw,draw2:spDraw2,action:spAction});

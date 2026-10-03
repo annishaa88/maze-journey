@@ -259,4 +259,5 @@ function drawPug(c,x,y,r){circle(c,x,y,r*.55,'#e9c46a');c.fillStyle='#6f4518';c.
   c.fillStyle='#6f4518';c.beginPath();c.ellipse(x,y+r*.18,r*.28,r*.2,0,0,7);c.fill();circle(c,x,y+r*.1,r*.06,'#2a2140');
   c.fillStyle='rgba(76,201,240,.55)';c.strokeStyle='#2a2140';c.lineWidth=Math.max(1,r*.05);[-.22,.22].forEach(k=>{c.beginPath();c.arc(x+k*r,y-r*.1,r*.15,0,7);c.fill();c.stroke();});eyes(c,x,y-r*.1,r,.22,.06);
   c.fillStyle='#2a2140';c.fillRect(x-r*.07,y-r*.12,r*.14,r*.04);}
-
+kit(VH,ftWrap({move:vhMove,tick:vhTick,hud:vhHud,draw:vhDraw,draw2:vhDraw2,action:vhAction}));
+kit(['parking'],{hint:vhHint,undo:vhUndo,pointer:vhPointer});

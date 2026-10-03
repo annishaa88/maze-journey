@@ -183,3 +183,4 @@ function drawJellyfish(c,x,y,r){
   c.fillStyle='#e0aaff';c.beginPath();c.arc(x,y+r*.15,r*.6,Math.PI,0);c.quadraticCurveTo(x,y+r*.35,x-r*.6,y+r*.15);c.fill();
   circle(c,x-r*.25,y-r*.25,r*.08,'#ffffff');eyes(c,x,y-r*.05,r,.2,.08);circle(c,x-r*.36,y+r*.06,r*.06,'#ff8fab');circle(c,x+r*.36,y+r*.06,r*.06,'#ff8fab');
 }
+kit(ST,ftWrap({move:stMove,tick:stTick,hud:stHud,draw:stDraw,draw2:stDraw2}));

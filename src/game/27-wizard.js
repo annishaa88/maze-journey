@@ -248,3 +248,4 @@ function drawCubie(c,x,y,r){
   c.fillStyle='#ff924c';rrect(c,x-r*.55,y-r*.5,r*1.1,r*1.05,r*.18);c.fill();c.fillStyle='rgba(255,255,255,.35)';rrect(c,x-r*.42,y-r*.42,r*.6,r*.18,r*.08);c.fill();
   c.fillStyle='rgba(0,0,0,.15)';c.fillRect(x-r*.5,y+r*.38,r,r*.12);eyes(c,x,y-r*.02,r,.2,.09);circle(c,x-r*.32,y+r*.15,r*.06,'#ffafcc');circle(c,x+r*.32,y+r*.15,r*.06,'#ffafcc');
 }
+kit(WZ,ftWrap({move:wzMove,tick:wzTick,hud:wzHud,draw:wzDraw,draw2:wzDraw2,action:wzAction}));

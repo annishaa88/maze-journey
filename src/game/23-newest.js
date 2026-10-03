@@ -255,4 +255,4 @@ function nwDraw2(s,n,W,now){
     const yy=cy+(up?-s*.5:s*.5),dir=up?-1:1;ctx.moveTo(cx-s*.12,yy-dir*s*.06);ctx.lineTo(cx+s*.12,yy-dir*s*.06);ctx.lineTo(cx,yy+dir*s*.08);ctx.fill();ctx.globalAlpha=1;}
   if(id==='memory'&&!G.memHide){ctx.font='bold '+Math.round(s*.4)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.globalAlpha=.6+.4*Math.sin(now/300);ctx.fillText('👀',(G.vis.x+.5)*s,(G.vis.y-.1)*s+s*.1);ctx.globalAlpha=1;}
 }
-
+kit(NW,{move:nwMove,tick:nwTick,hud:nwHud,draw:nwDraw,draw2:nwDraw2,action:nwAction,hint:nwHint,undo:nwUndo});

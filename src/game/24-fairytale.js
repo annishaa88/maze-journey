@@ -11,7 +11,7 @@ function ftFresh(lv){
     rlT0:performance.now(),...rhFresh(lv),...stFresh(lv),...pzFresh(lv),...wzFresh(lv),...vhFresh(lv)};
 }
 function ftAction(){
-  if(!G||G.done)return;if(PZ.has(G.W.id)){pzAction();return;}if(WZ.has(G.W.id)){wzAction();return;}if(VH.has(G.W.id)){vhAction();return;}
+  if(!G||G.done)return;
   if(G.W.id==='carpet'){if(G.wishLeft==null)G.wishLeft=G.cfg.wishes;
     if(G.wishArm){G.wishArm=false;toast('המשאלה מחכה 🪔');updateHud();return;}
     if(G.wishLeft<=0){toast('נגמרו המשאלות 🪔 אפשר להתחיל מחדש');return;}
@@ -21,11 +21,6 @@ function rlPhase(now){const c=G.cfg,T=c.green+800+c.red,ph=(now-G.rlT0)%T;return
 function herdAt(h,now){const P=G.cfg.period,n=G.lv.n,ph=(((now-G.stT0)/P+h.off)%1)*P,run=n*110;
   if(ph<1500)return {warn:true};if(ph<1500+run){const k=(ph-1500)/110;return {x:h.dir>0?k-.5:n-.5-k};}return {};}
 function ftMove(d){
-  if(G.W.id==='redhood'){rhMove(d);return;}
-  if(ST.has(G.W.id)){stMove(d);return;}
-  if(PZ.has(G.W.id)){pzMove(d);return;}
-  if(WZ.has(G.W.id)){wzMove(d);return;}
-  if(VH.has(G.W.id)){vhMove(d);return;}
   const id=G.W.id,lv=G.lv,n=lv.n,x=G.p.x,y=G.p.y,nx=x+DV[d][0],ny=y+DV[d][1];
   if(id==='snow'||id==='savanna'){
     if(lv.g[y][x][d]){bumpWall(d);return;}
@@ -92,12 +87,12 @@ function ftHint(){
   return false;
 }
 function ftTick(now){
-  const id=G.W.id;if(id==='redhood'){rhTick(now);return;}if(ST.has(id)){stTick(now);return;}if(isM3()){m3Tick(now);return;}if(WZ.has(id)){wzTick(now);return;}if(VH.has(id)){vhTick(now);return;}if(isBK()){if(!G.k.tray.length)bkDeal();return;}
+  const id=G.W.id;
   if(id==='savanna'&&now>G.hurtUntil){for(const h of G.lv.herds||[]){if(G.p.y!==h.y)continue;const a=herdAt(h,now);if(a.x!=null&&Math.abs(a.x-G.p.x)<.7){arcHurt('עדר! 🐃 העדר דחף אותך. מחכים בצד עד שהאבק עובר',G.safeP,true);break;}}}
   if(id==='toyroom'){const ph=rlPhase(now);if(ph!==G.rlLast){G.rlLast=ph;updateHud();if(ph===1)beep(300,.15,'triangle');if(ph===2)beep(200,.2,'triangle');if(ph===0)beep(600,.08,'sine');}}
 }
 function ftHud(add){
-  const id=G.W.id,lv=G.lv;if(id==='redhood'){rhHud(add);return;}if(ST.has(id)){stHud(add);return;}if(PZ.has(id)){if(isBK()&&!G.k.tray.length)bkDeal();pzHud(add);return;}if(WZ.has(id)){wzHud(add);return;}if(VH.has(id)){vhHud(add);return;}
+  const id=G.W.id,lv=G.lv;
   if(id==='snow')add('❄️ '+G.inv[0]+' · 🔥 '+G.inv[1]);
   if(id==='savanna'){const have=G.inv.map((v,i)=>v?SAVF[i].repeat(v):'').join('');add(have?'🧺 '+have:'🧺 הסל ריק');}
   if(id==='lagoon')add(G.lv.t[G.p.y][G.p.x]===1?'🧜‍♀️ זנב של בת ים':'🦶 רגליים');
@@ -189,7 +184,7 @@ function drawRockHorse(c,x,y,r){
 }
 /* drawing the boards */
 function ftDraw(s,n,W,now){
-  const id=G.W.id,lv=G.lv;ctx.textAlign='center';ctx.textBaseline='middle';if(id==='redhood'){rhDraw(s,n,W,now);return;}if(ST.has(id)){stDraw(s,n,W,now);return;}if(PZ.has(id)){pzDraw(s,n,W,now);return;}if(WZ.has(id)){wzDraw(s,n,W,now);return;}if(VH.has(id)){vhDraw(s,n,W,now);return;}
+  const id=G.W.id,lv=G.lv;ctx.textAlign='center';ctx.textBaseline='middle';
   if(id==='snow'){
     const gr=ctx.createLinearGradient(0,0,W,W);gr.addColorStop(0,'#f0f8ff');gr.addColorStop(1,'#dbeafe');ctx.fillStyle=gr;ctx.fillRect(0,0,W,W);
     ctx.strokeStyle='rgba(144,224,239,.35)';ctx.lineWidth=Math.max(1,s*.03);for(let y=0;y<n;y++)for(let x=0;x<n;x++)if((x*3+y*5)%7===0){const cx=(x+.5)*s,cy=(y+.5)*s;ctx.beginPath();for(let k=0;k<3;k++){const a=k*Math.PI/3;ctx.moveTo(cx-Math.cos(a)*s*.12,cy-Math.sin(a)*s*.12);ctx.lineTo(cx+Math.cos(a)*s*.12,cy+Math.sin(a)*s*.12);}ctx.stroke();}
@@ -235,7 +230,7 @@ function ftDraw(s,n,W,now){
   }
 }
 function ftDraw2(s,n,W,now){
-  const id=G.W.id,lv=G.lv;ctx.textAlign='center';ctx.textBaseline='middle';if(id==='redhood'){rhDraw2(s,n,W,now);return;}if(ST.has(id)){stDraw2(s,n,W,now);return;}if(WZ.has(id)){wzDraw2(s,n,W,now);return;}if(VH.has(id)){vhDraw2(s,n,W,now);return;}
+  const id=G.W.id,lv=G.lv;ctx.textAlign='center';ctx.textBaseline='middle';
   if(id==='savanna')(lv.herds||[]).forEach(h=>{const a=herdAt(h,now);if(a.x==null)return;const cx=(a.x+.5)*s,cy=(h.y+.5)*s;
     ctx.globalAlpha=.4;for(let i=1;i<4;i++)circle(ctx,cx-h.dir*i*s*.35,cy+s*.2,s*.18*(1-i*.2),'#c9a27e');ctx.globalAlpha=1;
     ctx.save();ctx.translate(cx,cy+Math.abs(Math.sin(now/80))*-s*.06);if(h.dir<0)ctx.scale(-1,1);ctx.font=Math.round(s*.65)+'px sans-serif';ctx.fillText('🐃',0,0);ctx.restore();});
@@ -248,6 +243,12 @@ function ftDraw2(s,n,W,now){
     if(G.wishArm){ctx.globalAlpha=.4+.3*Math.sin(now/120);circle(ctx,cx,cy-s*.3,s*.55,'#e0aaff');ctx.globalAlpha=1;ctx.font=Math.round(s*.35)+'px sans-serif';ctx.fillText('🪔',cx+s*.38,cy-s*.7);}}
   if(id==='toyroom'){const ph=rlPhase(now);ctx.font=Math.round(s*.9)+'px sans-serif';ctx.globalAlpha=ph===2?.95:ph===1?.7+.3*Math.sin(now/80):.45;ctx.fillText(ph===2?'👀':ph===1?'😮':'🙈',W-s*.6,s*.55);ctx.globalAlpha=1;}
 }
+kit(['snow','savanna','lagoon','carpet','ball','toyroom'],{move:ftMove,tick:ftTick,hud:ftHud,draw:ftDraw,draw2:ftDraw2,action:ftAction,hint:ftHint});
+// the story-book families (red hood, stories, puzzles, wizards, vehicles) share two habits: board text is centred, and buttons do nothing after the win
+function ftWrap(h){const o=Object.assign({},h);
+  for(const k of ['draw','draw2'])if(h[k])o[k]=(s,n,W,now)=>{ctx.textAlign='center';ctx.textBaseline='middle';h[k](s,n,W,now);};
+  if(h.action)o.action=()=>{if(!G||G.done)return;h.action();};
+  return o;}
 
 /* ---------- little red hood ---------- */
 function rhFresh(lv){return lv.dens?{flowersLeft:lv.flowers.map(f=>Object.assign({},f)),bouquet:[],wolves:lv.dens.map(d=>({x:d.x,y:d.y,hx:d.x,hy:d.y})),lastPath:{x:lv.start.x,y:lv.start.y}}:{};}
@@ -330,4 +331,4 @@ function rhDraw2(s,n,W,now){
     if(!awake){ctx.fillStyle='#2a2140';ctx.font='bold '+Math.round(s*.3)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('z',cx+s*.3,cy-s*.35+Math.sin(now/300)*s*.04);}});
   if(G.flowersLeft.length)nwLock(s);
 }
-
+kit(['redhood'],ftWrap({move:rhMove,tick:rhTick,hud:rhHud,draw:rhDraw,draw2:rhDraw2}));

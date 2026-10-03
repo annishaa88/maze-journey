@@ -27,8 +27,7 @@ function arcHurt(text,to,guard){
 function arcMove(d){
   const id=G.W.id,lv=G.lv,n=lv.n,x=G.p.x,y=G.p.y,nx=x+DV[d][0],ny=y+DV[d][1];
   const inside=nx>=0&&ny>=0&&nx<n&&ny<n,toGoal=nx===lv.goal.x&&ny===lv.goal.y;
-  if(SPORT.has(id)){spMove(d);return;}
-  if(CHAL.has(id)){chMove(d);return;}
+  const K=kitHook('move');if(K){K(d);return;}
   if(id==='deep'){deepMove(d);return;}
   if(id==='munch'){
     if(lv.g[y][x][d]){bumpWall(d);return;}
@@ -131,7 +130,7 @@ function ladLand(){
   if(cells.length){G.anim={cells,i:0,t:0,ms:70};return;}
   beep(300,.05,'square');barrelHit();if(atGoal())win();
 }
-function arcAction(){if(!G)return;if(NW.has(G.W.id)){nwAction();return;}if(FT.has(G.W.id)){ftAction();return;}if(G.W.id==='bomb')placeBomb();else if(G.W.id==='ladders')ladJump();else if(SPORT.has(G.W.id))spAction();}
+function arcAction(){if(!G)return;const K=kitHook('action');if(K){K();return;}if(G.W.id==='bomb')placeBomb();else if(G.W.id==='ladders')ladJump();}
 function placeBomb(){
   if(!G||G.done||G.W.id!=='bomb'||arcPaused())return;
   if(G.bombAt){arcSay('אפשר זיקוק אחד בכל פעם');return;}
@@ -175,8 +174,7 @@ window.addEventListener('pagehide',pauseGame);
 function arcTick(now){
   if(arcPaused()){G.arcAt=now;if(G.bombAt)G.bombAt.t=Math.max(G.bombAt.t,now+400);return;}
   const id=G.W.id,lv=G.lv;
-  if(SPORT.has(id)){spTick(now);return;}
-  if(CHAL.has(id)){chTick(now);return;}
+  const K=kitHook('tick');if(K){K(now);return;}
   if(id==='ladders'&&!G.anim&&G.p.y<G.bestRow&&GEN.ladStand(lv.t,lv.n,G.p.x,G.p.y)&&lv.t[G.p.y][G.p.x]!==2){G.bestRow=G.p.y;G.check={x:G.p.x,y:G.p.y};}
   if(id==='ladders'){const fl=lv.floors.filter(yb=>yb>G.p.y).length;if(fl!==G.floorShown){G.floorShown=fl;updateHud();}}
   if(G.jump){const j=G.jump,e=Math.min(1,(now-j.t0)/j.dur),fy=j.fy??j.y,ty=j.ty??j.y;G.vis={x:j.fx+(j.tx-j.fx)*e,y:fy+(ty-fy)*e-Math.sin(e*Math.PI)*1.15};if(e>=1){if(j.land)j.land();else ladLand();}}
@@ -198,8 +196,7 @@ function arcTick(now){
 }
 function arcHud(hud){
   const id=G.W.id,add=t=>{const s=document.createElement('span');s.className='chip';s.textContent=t;hud.appendChild(s);return s;};
-  if(SPORT.has(id)){spHud(add);return;}
-  if(CHAL.has(id)){chHud(add);return;}
+  const K=kitHook('hud');if(K){K(add);return;}
   if(id==='munch'){add('🟡 נקודות: '+G.dots.size);const s=add('ניקוד '+String(G.score).padStart(5,'0'));s.style.fontFamily='monospace';}
   if(id==='snake'){add('🍏 פירות: '+(G.lv.fruits.length-G.fruitsLeft.size)+' מתוך '+G.lv.fruits.length);add('🐍 אורך: '+G.body.length);}
   if(id==='road')add('🚗 מחכים לרווח');
@@ -356,8 +353,7 @@ function drawBalloon(c,x,y,r,now){
 function arcDraw(s,n,W,now){
   const id=G.W.id,lv=G.lv;
   if(id==='deep'){deepDraw(s,n,W,now);return;}
-  if(SPORT.has(id)){spDraw(s,n,W,now);return;}
-  if(CHAL.has(id)){chDraw(s,n,W,now);return;}
+  const K=kitHook('draw');if(K){K(s,n,W,now);return;}
   if(id==='munch'){
     ctx.fillStyle='#0b0b2a';ctx.fillRect(0,0,W,W);
     wallStroke(lv.g,n,s,'#3f5efb',Math.max(3,s*.22));wallStroke(lv.g,n,s,'#0b0b2a',Math.max(1,s*.08));
@@ -411,8 +407,7 @@ function arcDraw(s,n,W,now){
 function arcDraw2(s,n,W,now){
   const id=G.W.id,lv=G.lv;
   if(id==='deep'){deepDraw2(s,n,W,now);return;}
-  if(SPORT.has(id)){spDraw2(s,n,W,now);return;}
-  if(CHAL.has(id)){chDraw2(s,n,W,now);return;}
+  const K=kitHook('draw2');if(K){K(s,n,W,now);return;}
   const lock=left=>{if(!left)return;const X=lv.goal.x*s,Y=lv.goal.y*s;ctx.fillStyle='rgba(20,15,40,.45)';rrect(ctx,X+s*.08,Y+s*.08,s*.84,s*.84,s*.14);ctx.fill();
     ctx.font=Math.round(s*.42)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🔒',X+s/2,Y+s*.52);};
   if(id==='munch'){lock(G.dots.size);const sc=now<G.powerUntil,fl=sc&&G.powerUntil-now<1800&&Math.floor(now/160)%2;

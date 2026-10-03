@@ -18,8 +18,6 @@ function chFresh(lv){
 }
 function chMove(d){
   const id=G.W.id,lv=G.lv,n=lv.n,x=G.p.x,y=G.p.y;
-  if(NW.has(id)){nwMove(d);return;}
-  if(FT.has(id)){ftMove(d);return;}
   if(id==='tilt'){
     if(G.anim||G.tiltA)return;
     const r=GEN.tiltSim(lv.t,n,G.p,G.bpos,d,lv.goal);
@@ -68,12 +66,12 @@ function shadowHit(){
     G.trailPath=[{x:G.p.x,y:G.p.y}];G.shIdx=-1;updateHud();}
 }
 function chTick(now){
-  const id=G.W.id;if(NW.has(id)){nwTick(now);return;}if(FT.has(id)){ftTick(now);return;}
+  const id=G.W.id;
   if(G.tiltA&&now-G.tiltA.t0>G.tiltA.dur)G.tiltA=null;
   if(id==='shadow'&&G.shIdx>=0&&now-G.shAt>G.cfg.speed){G.shAt=now;if(G.shIdx<G.trailPath.length-1)G.shIdx++;shadowHit();}
 }
 function chHud(add){
-  const id=G.W.id,lv=G.lv;if(NW.has(id)){nwHud(add);return;}if(FT.has(id)){ftHud(add);return;}
+  const id=G.W.id,lv=G.lv;
   if(id==='tilt')add('🔄 הטיות: '+G.tilts);
   if(id==='shadow'){add('🏮 פנסים: '+(lv.lights.length-G.lightsLeft.length)+' מתוך '+lv.lights.length);add(G.shIdx<0?'👣 הצל מחכה':'👣 הצל בדרך!');}
   if(id==='floors')add('🏢 קומה '+(floorOf(G.p.x,G.p.y)+1)+' מתוך '+lv.F+' · היציאה בקומה '+lv.F);
@@ -112,7 +110,7 @@ function drawRoof(c,x,y,r){c.fillStyle='#8d99ae';c.fillRect(x-r*.7,y-r*.1,r*1.4,
 function drawCodeDoor(c,x,y,r,open){c.fillStyle='#5d4037';rrect(c,x-r*.55,y-r*.8,r*1.1,r*1.6,r*.12);c.fill();c.fillStyle=open?'#2a9d5c':'#8d6e63';rrect(c,x-r*.42,y-r*.66,r*.84,r*1.32,r*.08);c.fill();
   c.fillStyle='#ffd23f';c.fillRect(x+r*.12,y-r*.1,r*.22,r*.3);c.strokeStyle='#ffd23f';c.lineWidth=Math.max(1,r*.07);c.beginPath();c.arc(x+r*.23,y-r*.12,r*.09,Math.PI,0);c.stroke();}
 function chDraw(s,n,W,now){
-  const id=G.W.id,lv=G.lv;if(NW.has(id)){nwDraw(s,n,W,now);return;}if(FT.has(id)){ftDraw(s,n,W,now);return;}
+  const id=G.W.id,lv=G.lv;
   if(id==='tilt'){
     const grd=ctx.createLinearGradient(0,0,W,W);grd.addColorStop(0,'#c9ada7');grd.addColorStop(1,'#9a8c98');ctx.fillStyle=grd;ctx.fillRect(0,0,W,W);
     for(let y=0;y<n;y++)for(let x=0;x<n;x++){const X=x*s,Y=y*s;if(lv.t[y][x]){ctx.fillStyle='#4a4e69';rrect(ctx,X+s*.04,Y+s*.04,s*.92,s*.92,s*.14);ctx.fill();ctx.fillStyle='#6c6f93';rrect(ctx,X+s*.04,Y+s*.04,s*.92,s*.3,s*.14);ctx.fill();}
@@ -148,7 +146,7 @@ function chDraw(s,n,W,now){
   }
 }
 function chDraw2(s,n,W,now){
-  const id=G.W.id,lv=G.lv;if(NW.has(id)){nwDraw2(s,n,W,now);return;}if(FT.has(id)){ftDraw2(s,n,W,now);return;}
+  const id=G.W.id,lv=G.lv;
   if(id==='tilt'){const a=G.tiltA,e=a?Math.min(1,(now-a.t0)/a.dur):1;
     G.bpos.forEach((b,i)=>{let x=b[0],y=b[1];if(a&&a.from[i]){const f=a.from.slice().sort((p,q)=>Math.hypot(p[0]-b[0],p[1]-b[1])-Math.hypot(q[0]-b[0],q[1]-b[1]))[0];x=f[0]+(b[0]-f[0])*e;y=f[1]+(b[1]-f[1])*e;}
       drawBoulder(ctx,(x+.5)*s,(y+.5)*s,s*.36);});}
@@ -156,4 +154,4 @@ function chDraw2(s,n,W,now){
   if(id==='shadow'&&G.lightsLeft.length){const X=lv.goal.x*s,Y=lv.goal.y*s;ctx.fillStyle='rgba(20,15,40,.45)';rrect(ctx,X+s*.08,Y+s*.08,s*.84,s*.84,s*.14);ctx.fill();ctx.font=Math.round(s*.42)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🔒',X+s/2,Y+s*.52);}
   if(id==='escape'&&G.doorOpen){ctx.font=Math.round(s*.4)+'px sans-serif';ctx.textAlign='center';ctx.fillText('🔓',(lv.goal.x+.8)*s,(lv.goal.y+.2)*s);}
 }
-
+kit(['tilt','shadow','floors','escape'],{move:chMove,tick:chTick,hud:chHud,draw:chDraw,draw2:chDraw2});
