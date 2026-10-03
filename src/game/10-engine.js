@@ -140,7 +140,7 @@ function updateHud(){
     const d=document.createElement('span');d.className='dot';d.style.background=G.tog?'#ff4d9d':'#4cc9f0';
     s.append(d,document.createTextNode(G.tog?'השערים הוורודים פתוחים':'השערים התכולים פתוחים'));hud.appendChild(s);
   }
-  if(ARC.has(G.W.id))arcHud(hud);
+  if(isArc(G.W.id))arcHud(hud);
   if(!G.duel&&prog[G.w+'-'+G.l]!=null&&parOf()!=null){const s=document.createElement('span');s.className='chip';s.textContent=route[G.w+'-'+G.l]?'🏅 ✓':'🏅 '+parOf()+' 👣';s.title='הדרך הכי קצרה: '+parOf()+' מהלכים';hud.appendChild(s);}
   fitHud();
 }
@@ -335,7 +335,7 @@ function move0(dir){
   if(!G||G.done||G.anim||pausedAt||!document.getElementById('keypad').hidden||!document.getElementById('tut').hidden||!document.getElementById('turn').hidden||!document.getElementById('duelRes').hidden||!document.getElementById('building').hidden)return;
   let d=DIRN[dir];
   if(G.W.id==='forest'){if(performance.now()<(G.flipLock||0))return;if(G.flip)d=(d+2)%4;}
-  if(ARC.has(G.W.id)){arcMove(d);return;}
+  if(isArc(G.W.id)){arcMove(d);return;}
   if(G.W.id==='mirror'){
     const g=G.lv.g,md=d===1?3:d===3?1:d;let moved=false;
     if(!G.parkA&&!g[G.p.y][G.p.x][d]){G.p={x:G.p.x+DV[d][0],y:G.p.y+DV[d][1]};enter(G.p.x,G.p.y);moved=true;}

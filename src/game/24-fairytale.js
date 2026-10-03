@@ -1,5 +1,4 @@
 /* ================= fairy-tale land: playing ================= */
-const FT=new Set(['firetruck','schoolbus','train','parking','lights','race','broom','stairs','potion','owlpost','flykeys','wand','match3','blocks','match3b','blockscore','hansel','pigs','beanstalk','thorns','redhood','snow','savanna','lagoon','carpet','ball','toyroom']);
 const SNOWI=['❄️','🔥'],SNOWN=['פתית שלג','להבה'];
 const SAVA=['🦒','🐘','🦓','🦛'],SAVF=['🍃','🥜','🌾','🍉'],SAVN=['הג׳ירפה','הפיל','הזברה','ההיפופוטם'];
 function ftFresh(lv){

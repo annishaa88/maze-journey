@@ -1,5 +1,4 @@
 /* ================= challenge region: playing ================= */
-const CHAL=new Set(['firetruck','schoolbus','train','parking','lights','race','broom','stairs','potion','owlpost','flykeys','wand','match3','blocks','match3b','blockscore','hansel','pigs','beanstalk','thorns','redhood','snow','savanna','lagoon','carpet','ball','toyroom','tilt','shadow','floors','escape','sheep','chef','memory','spell','paint','gravity']);
 const CLUEC=['🔴','🟢','🔵','🟡'];
 function clueExpr(v,g){
   const r=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),pick=a=>a[Math.floor(Math.random()*a.length)];

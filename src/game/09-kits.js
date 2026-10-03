@@ -4,4 +4,6 @@
 // The engine asks the kit of the world being played; a missing hook falls back to the shared code.
 const KITS={};
 function kit(ids,hooks){for(const id of ids)KITS[id]=Object.assign({},KITS[id],hooks);}
+// arcade-style worlds (anything with a kit) keep extra state and run through arcMove / arcTick / arcDraw
+function isArc(id){return id in KITS;}
 function kitHook(name){const k=G&&G.W&&KITS[G.W.id];return k&&k[name]||null;}

@@ -1,5 +1,6 @@
 /* ================= retro arcade worlds: playing ================= */
-const ARC=new Set(['firetruck','schoolbus','train','parking','lights','race','broom','stairs','potion','owlpost','flykeys','wand','match3','blocks','match3b','blockscore','hansel','pigs','beanstalk','thorns','redhood','snow','savanna','lagoon','carpet','ball','toyroom','sheep','chef','memory','spell','paint','gravity','tilt','shadow','floors','escape','munch','snake','road','bomb','ladders','mines','deep','soccer','hoops','ski','swim','tennis','hurdles','golf','dojo']);
+// the arcade-style worlds below play through arc*; every family file adds its own worlds with kit(...)
+kit(['munch','snake','road','bomb','ladders','mines','deep'],{});
 const rndi=k=>Math.floor(Math.random()*k);
 function minesFlood(lv,known,x,y){
   const st=[[x,y]];

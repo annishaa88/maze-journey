@@ -69,7 +69,7 @@ function frame(now){
       if(f.i+f.dir<0||f.i+f.dir>=f.cells.length)f.dir*=-1;
       const [nx,ny]=f.cells[f.i+f.dir];if(nx===G.p.x&&ny===G.p.y){f.dir*=-1;return;}
       f.i+=f.dir;});fishHit();}
-  if(ARC.has(G.W.id)&&!G.done)arcTick(now);
+  if(isArc(G.W.id)&&!G.done)arcTick(now);
   // a maze bigger than the screen: the view follows her
   let cam=null;if(G.lv.view&&n>G.lv.view){const V=G.lv.view,cl=v=>Math.max(0,Math.min(n-V,v)),tx=cl(G.vis.x+.5-V/2),ty=cl(G.vis.y+.5-V/2);
     if(!G.cam)G.cam={x:tx,y:ty};else{const k=calmFx()?1:Math.min(1,dt/110);G.cam.x+=(tx-G.cam.x)*k;G.cam.y+=(ty-G.cam.y)*k;}
@@ -173,7 +173,7 @@ function frame(now){
     ctx.fillStyle='rgba(76,201,240,.4)';G.ttrail.forEach(k=>{const [x,y]=k.split(',').map(Number);ctx.beginPath();ctx.arc((x+.5)*s,(y+.5)*s,s*.13,0,7);ctx.fill();});
     drawWalls(G.lv.g,n,s,'#6f5fa0');
     drawMirrorGoal(ctx,(G.lv.twinGoal.x+.5)*s,(G.lv.twinGoal.y+.5)*s,s*.42,'#4cc9f0');
-  }else if(ARC.has(G.W.id)){arcDraw(s,n,W,now);
+  }else if(isArc(G.W.id)){arcDraw(s,n,W,now);
   }else if(QUIZ.has(G.W.id)){
     const paper={numbers:'#fffdf6',english:'#f6f9ff',hebrew:'#fffaf0',logic:'#f8f5ff',geometry:'#f3fffd'}[G.W.id];
     ctx.fillStyle=paper;ctx.fillRect(0,0,W,W);
@@ -263,7 +263,7 @@ function frame(now){
   }
   if(!(G.W.id==='munch'&&G.dots.size)&&!(G.W.id==='snake'&&G.fruitsLeft.size))goalGlow(s,now);
   G.W.goal(ctx,(G.lv.goal.x+.5)*s,(G.lv.goal.y+.5)*s,s*.42);
-  if(ARC.has(G.W.id))arcDraw2(s,n,W,now);
+  if(isArc(G.W.id))arcDraw2(s,n,W,now);
   movers().forEach(f=>{const [x,y]=glide(f,...f.cells[f.i]),cx=(x+.5)*s,cy=(y+.5)*s,up=awake(f);
     if(['jungle','sea','farm','haunt'].includes(G.W.id)||G.custom){
       if(up&&(f.t||0)>=AWAKE-1){ctx.globalAlpha=.55+.45*Math.sin(now/80);} // about to nap: flicker
