@@ -249,7 +249,7 @@ function frame(now){
     const cx=(stk[0]+.5)*s,cy=(stk[1]+.5)*s+Math.sin(now/260)*s*.05;
     ctx.save();ctx.translate(cx,cy);ctx.rotate(Math.sin(now/500)*.15);
     ctx.fillStyle='#ffffff';rrect(ctx,-s*.36,-s*.36,s*.72,s*.72,s*.12);ctx.fill();ctx.strokeStyle='#ffc23c';ctx.lineWidth=Math.max(1.5,s*.06);ctx.stroke();
-    ctx.font=Math.round(s*.5)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(STICKERS[G.w][G.l],0,s*.03);ctx.restore();
+    ctx.font=Math.round(s*.5)+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(WORLDS[G.w].stickers[G.l],0,s*.03);ctx.restore();
     const tw=(now/180)%6.28;circle(ctx,cx+Math.cos(tw)*s*.42,cy+Math.sin(tw)*s*.42,Math.max(1,s*.05),'#ffc23c');
   }
   if(G.W.id==='haunt'){

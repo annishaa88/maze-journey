@@ -13,18 +13,19 @@ function nextTarget(){
 }
 const unfolded=new Set();
 const REGIONS=[
-  {name:'עולם ההרפתקאות',icon:'🏝️',worlds:[0,1,2,3,4,23,64],bg:'linear-gradient(135deg,#2a9fd6,#1a9ba1)'},
-  {name:'עולם ההפתעות',icon:'🎪',worlds:[5,6,7,8,37,38],bg:'linear-gradient(135deg,#e56b9f,#d9a441)'},
-  {name:'עולם הקסם',icon:'🌙',worlds:[9,10,11,12,39],bg:'linear-gradient(135deg,#6a994e,#4a3b73)'},
-  {name:'בית הספר',icon:'🎓',worlds:[13,14,15,16,24,40],bg:'linear-gradient(135deg,#f3722c,#8338ec)'},
-  {name:'עולם הארקייד',icon:'🕹️',worlds:[17,18,19,20,21,22,54,62,55,63],bg:'linear-gradient(135deg,#2b2b8f,#c0392b 60%,#e07a1f)'},
-  {name:'עולם הספורט',icon:'🏆',worlds:[25,26,27,28,29,30,31,32],bg:'linear-gradient(135deg,#2e7d32,#0096c7 55%,#d35400)'},
-  {name:'עולם האתגרים',icon:'🧩',worlds:[33,34,35,36,41,42],bg:'linear-gradient(135deg,#4a4e69,#5a4b81 50%,#8d6e63)'},
-  {name:'עולם האגדות',icon:'🏰',worlds:[43,44,45,46,47,48],bg:'linear-gradient(135deg,#7b2cbf,#f72585 55%,#ffb703)'},
-  {name:'עולם הסיפורים',icon:'📖',worlds:[49,50,51,52,53],bg:'linear-gradient(135deg,#d62828,#f77f00 50%,#2d6a4f)'},
-  {name:'בית הספר לקוסמים',icon:'🪄',worlds:[56,57,58,59,60,61],bg:'linear-gradient(135deg,#240046,#7b2cbf 50%,#ffb703)'},
-  {name:'עולם כלי התחבורה',icon:'🚗',worlds:[65,66,67,68,69,70],bg:'linear-gradient(135deg,#e63946,#ffb703 50%,#219ebc)'}];
+  {id:'adventure',name:'עולם ההרפתקאות',icon:'🏝️',worlds:wids('ice','castle','sea','jungle','space','deep','giant'),bg:'linear-gradient(135deg,#2a9fd6,#1a9ba1)'},
+  {id:'surprise',name:'עולם ההפתעות',icon:'🎪',worlds:wids('candy','farm','rainbow','toys','sheep','chef'),bg:'linear-gradient(135deg,#e56b9f,#d9a441)'},
+  {id:'magic',name:'עולם הקסם',icon:'🌙',worlds:wids('forest','beach','mirror','haunt','memory'),bg:'linear-gradient(135deg,#6a994e,#4a3b73)'},
+  {id:'school',name:'בית הספר',icon:'🎓',worlds:wids('numbers','english','hebrew','logic','geometry','spell'),bg:'linear-gradient(135deg,#f3722c,#8338ec)'},
+  {id:'arcade',name:'עולם הארקייד',icon:'🕹️',worlds:wids('munch','snake','road','bomb','ladders','mines','match3','match3b','blocks','blockscore'),bg:'linear-gradient(135deg,#2b2b8f,#c0392b 60%,#e07a1f)'},
+  {id:'sport',name:'עולם הספורט',icon:'🏆',worlds:wids('soccer','hoops','ski','swim','tennis','hurdles','golf','dojo'),bg:'linear-gradient(135deg,#2e7d32,#0096c7 55%,#d35400)'},
+  {id:'challenge',name:'עולם האתגרים',icon:'🧩',worlds:wids('tilt','shadow','floors','escape','paint','gravity'),bg:'linear-gradient(135deg,#4a4e69,#5a4b81 50%,#8d6e63)'},
+  {id:'fairy',name:'עולם האגדות',icon:'🏰',worlds:wids('snow','savanna','lagoon','carpet','ball','toyroom'),bg:'linear-gradient(135deg,#7b2cbf,#f72585 55%,#ffb703)'},
+  {id:'story',name:'עולם הסיפורים',icon:'📖',worlds:wids('redhood','hansel','pigs','beanstalk','thorns'),bg:'linear-gradient(135deg,#d62828,#f77f00 50%,#2d6a4f)'},
+  {id:'wizard',name:'בית הספר לקוסמים',icon:'🪄',worlds:wids('broom','stairs','potion','owlpost','flykeys','wand'),bg:'linear-gradient(135deg,#240046,#7b2cbf 50%,#ffb703)'},
+  {id:'vehicles',name:'עולם כלי התחבורה',icon:'🚗',worlds:wids('firetruck','schoolbus','train','parking','lights','race'),bg:'linear-gradient(135deg,#e63946,#ffb703 50%,#219ebc)'}];
 let region=load('journey_region',null);
+function regionWorlds(...ids){return REGIONS.filter(r=>ids.includes(r.id)).flatMap(r=>r.worlds);}
 function regionOf(w){return REGIONS.findIndex(r=>r.worlds.includes(w));}
 function setRegion(i){region=i;save('journey_region',i);renderMap();window.scrollTo(0,document.getElementById('contBtn').offsetTop-12);}
 const PATH=[[82,40],[50,40],[18,40],[18,150],[50,150],[82,150]];
@@ -104,7 +105,7 @@ function renderMap(){
       b.querySelector('b').style.background=sc!=null?W.deep:W.hex;
       b.querySelector('small').textContent=sc!=null?'★'.repeat(sc)+'☆'.repeat(3-sc):'';
       if(route[w+'-'+l]){const m=document.createElement('span');m.className='rmed';m.textContent='🏅';b.appendChild(m);}
-      if(stickers.has(w+'-'+l)){const k=document.createElement('span');k.className='stk';k.textContent=STICKERS[w][l];b.appendChild(k);}
+      if(stickers.has(w+'-'+l)){const k=document.createElement('span');k.className='stk';k.textContent=WORLDS[w].stickers[l];b.appendChild(k);}
       b.setAttribute('aria-label',W.name+' שלב '+(l+1));
       if(!lo)b.disabled=true;
       if(nt&&nt[0]===w&&nt[1]===l){b.classList.add('next');const me=iconCanvas(46,(c,x,y,r)=>drawChar(c,curChar(),x,y,r));me.className='me';b.appendChild(me);

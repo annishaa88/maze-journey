@@ -17,12 +17,12 @@ function renderColl(){
   document.getElementById('stickerBar').style.width=(100*regCount()/(WORLDS.length*6))+'%';
   const al=document.getElementById('albums');al.innerHTML='';const last=load('journey_last',null),lastReg=last?regionOf(last[0]):0;
   REGIONS.forEach((Rg,ri)=>{const d=document.createElement('details');d.className='reg-album';if(ri===lastReg)d.open=true;
-    const got=Rg.worlds.reduce((a,w)=>a+STICKERS[w].filter((_,l)=>stickers.has(w+'-'+l)).length,0);
+    const got=Rg.worlds.reduce((a,w)=>a+WORLDS[w].stickers.filter((_,l)=>stickers.has(w+'-'+l)).length,0);
     const sm=document.createElement('summary');sm.style.background=Rg.bg;sm.append(Rg.icon+' '+Rg.name+' ');const c=document.createElement('small');c.textContent=got+'/'+Rg.worlds.length*6+(got===Rg.worlds.length*6?' 👑':'');sm.appendChild(c);d.appendChild(sm);
     Rg.worlds.forEach(w=>{const W=WORLDS[w],row=document.createElement('div');row.className='srow';row.appendChild(iconCanvas(15,W.goal));
       const nm=document.createElement('div');nm.className='sname';nm.textContent=W.name;row.appendChild(nm);
       const grid=document.createElement('div');grid.className='stickers';
-      STICKERS[w].forEach((e,l)=>{const c=document.createElement('div');const have=stickers.has(w+'-'+l);c.className='sticker '+(have?'have':'miss ghost');c.textContent=e;c.title=have?'':'המדבקה מוחבאת בשלב '+(l+1);if(!have){const n=document.createElement('small');n.textContent=l+1;c.appendChild(n);}grid.appendChild(c);});
+      WORLDS[w].stickers.forEach((e,l)=>{const c=document.createElement('div');const have=stickers.has(w+'-'+l);c.className='sticker '+(have?'have':'miss ghost');c.textContent=e;c.title=have?'':'המדבקה מוחבאת בשלב '+(l+1);if(!have){const n=document.createElement('small');n.textContent=l+1;c.appendChild(n);}grid.appendChild(c);});
       row.appendChild(grid);d.appendChild(row);});
     al.appendChild(d);});
   const rs=document.createElement('details');rs.className='reg-album';

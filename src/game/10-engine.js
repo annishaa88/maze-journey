@@ -311,7 +311,7 @@ function enter(x,y){
   const st=G.lv.sticker;
   if(st&&st!=='end'&&st[0]===x&&st[1]===y&&!stickers.has(G.w+'-'+G.l)){
     stickers.add(G.w+'-'+G.l);saveStickers();G.gotSticker=true;
-    [988,1319,1568].forEach((f,i)=>setTimeout(()=>beep(f,.12,'sine'),i*80));toast('מצאת מדבקה '+STICKERS[G.w][G.l]+'! היא כבר באלבום.');checkMedals();
+    [988,1319,1568].forEach((f,i)=>setTimeout(()=>beep(f,.12,'sine'),i*80));toast('מצאת מדבקה '+WORLDS[G.w].stickers[G.l]+'! היא כבר באלבום.');checkMedals();
   }
 }
 function buzz(ms){try{if(navigator.vibrate)navigator.vibrate(ms);}catch(e){}}
@@ -500,7 +500,7 @@ function win(){
   const sec=Math.round((Date.now()-G.t0)/1000);
   let stickerNote='';
   if(!stickers.has(key)&&G.lv.sticker==='end'){stickers.add(key);saveStickers();G.gotSticker=true;}
-  if(G.gotSticker)stickerNote=' ומצאת את המדבקה '+STICKERS[G.w][G.l]+'!';
+  if(G.gotSticker)stickerNote=' ומצאת את המדבקה '+WORLDS[G.w].stickers[G.l]+'!';
   else if(!stickers.has(key))stickerNote=' המדבקה של השלב עוד מחכה במבוך.';
   if(sec<20)stats.fast=1;
   if(['sea','jungle','farm'].includes(G.W.id)&&!G.hits)stats.clean=1;
