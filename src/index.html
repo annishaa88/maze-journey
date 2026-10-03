@@ -1,0 +1,327 @@
+<title>מסע המבוכים</title>
+<!-- the two fonts live inside the file, so the game looks the same with no internet -->
+<style>
+@include css/fonts.css
+@include css/game.css
+</style>
+
+<!-- MAP -->
+<div class="wrap" id="mapScreen">
+  <div class="topline">
+    <h1>מסע המבוכים</h1>
+    <span style="display:flex;gap:6px;align-items:center"><button class="chip pchip" id="profBtn" aria-expanded="false">👤 <span id="profName"></span></button><span class="chip" id="totalStars">⭐ 0</span></span>
+  </div>
+  <div class="home-top">
+    <button class="avatar" id="shopOpen" aria-label="חנות התלבושות"><canvas id="shopIcon" width="108" height="108"></canvas><span><b id="avName"></b><small id="shopLine"></small></span></button>
+    <button class="rbtn" id="collOpen" aria-label="האוסף שלי">📒<em id="collBadge"></em></button>
+    <button class="rbtn" id="setBtn" aria-label="הגדרות" aria-expanded="false">⚙️</button>
+  </div>
+  <div class="settings" id="profiles" hidden>
+    <h3>👥 מי משחקת עכשיו?</h3>
+    <div class="plist" id="plist"></div>
+    <div class="pnew"><input id="pname" maxlength="12" placeholder="שם" aria-label="שם"><button class="plain" id="padd">➕ שחקן חדש</button><button class="plain" id="pren">✏️ לשנות את השם שלי</button></div>
+    <p class="note">לכל שחקן יש כוכבים, שלבים, דמויות ורמת קושי משלו.</p>
+  </div>
+  <div class="settings" id="settings" hidden>
+    <h3>רמת קושי</h3>
+    <div class="seg" id="diffSeg" style="grid-template-columns:repeat(4,1fr)">
+      <button data-d="0" id="diff0">🐢 רגוע</button>
+      <button data-d="1" id="diff1">🙂 רגיל</button>
+      <button data-d="2" id="diff2">🔥 אתגר</button>
+      <button data-d="3" id="diff3">🧠 מבוגרים</button>
+    </div>
+    <p class="note" id="diffNote"></p>
+    <h3>🎓 כיתה, לעולמות הלימוד (מספרים, אנגלית, עברית, חידות)</h3>
+    <div class="seg" id="gradeSeg" style="grid-template-columns:repeat(6,1fr)">
+      <button id="grade0">א</button><button id="grade1">ב</button><button id="grade2">ג</button><button id="grade3">ד</button><button id="grade4">ה</button><button id="grade5">ו</button>
+    </div>
+    <div class="set-row">
+      <button class="plain" id="voiceBtn"></button>
+      <button class="plain" id="muteBtn"></button>
+      <button class="plain" id="nightBtn"></button>
+    </div>
+    <p class="note" id="voiceNote" hidden></p>
+    <h3>💾 גיבוי והעברת התקדמות</h3>
+    <p class="note">שומרים את כל ההתקדמות של כל השחקנים: כוכבים, מדבקות, דמויות והמבוכים שבנו. אפשר להעביר אותה לטלפון אחר או לאפליקציה.</p>
+    <div class="set-row"><button class="plain" id="bkSave">📤 לשמור גיבוי</button><button class="plain" id="bkLoad">📥 לטעון גיבוי</button></div>
+    <div class="bkbox" id="bkOut" hidden><textarea id="bkCode" rows="3" dir="ltr" readonly aria-label="קוד הגיבוי"></textarea>
+      <div class="set-row"><button class="plain" id="bkCopy">📋 להעתיק את הקוד</button><button class="plain" id="bkFile">📁 לשמור כקובץ</button></div></div>
+    <div class="bkbox" id="bkIn" hidden><textarea id="bkInText" rows="3" dir="ltr" placeholder="מדביקים כאן את קוד הגיבוי" aria-label="קוד גיבוי"></textarea>
+      <div class="set-row"><button class="plain" id="bkPick">📁 לבחור קובץ</button><button class="plain" id="bkApply">✅ לטעון</button></div>
+      <input type="file" id="bkFileIn" accept=".txt,.json,text/plain,application/json" hidden></div>
+    <p class="note bkmsg" id="bkMsg" aria-live="polite"></p>
+  </div>
+  <button class="continue" id="contBtn"><i>▶</i><div><b id="contTitle"></b><span id="contSub"></span></div></button>
+  <div class="duo"><button class="duel-open" id="duelOpen"><span>👭</span>משחק בשתיים</button><button class="duel-open" id="buildOpen"><span>🧱</span>בונים מבוך</button></div>
+  <button class="gift" id="giftBtn" hidden><span class="g">🎁</span><div><b>תיבת הפתעה!</b><span id="giftSub"></span></div></button>
+  <div class="jump" id="jump" aria-label="קפיצה לעולם"></div>
+  <div id="worlds" style="display:flex;flex-direction:column;gap:14px"></div>
+  <div class="reset">
+    <button class="plain" id="resetAsk">🔄 להתחיל את כל המסע מחדש</button>
+    <div class="reset-confirm" id="resetConfirm" hidden>
+      <p>בטוח? כל הכוכבים, השלבים, הדמויות, התלבושות, המדבקות והמדליות יימחקו, והמסע יתחיל מהשלב הראשון.</p>
+      <div class="btns">
+        <button class="big" id="resetYes">כן, להתחיל מחדש</button>
+        <button class="plain" id="resetNo">לא, להמשיך</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="giftModal" hidden role="dialog" aria-modal="true" aria-labelledby="gHead">
+  <div class="modal-card">
+    <div class="gbox" id="gbox">🎁</div>
+    <div class="prize" id="gPrize" hidden></div>
+    <h3 id="gHead">תיבת הפתעה</h3>
+    <p id="gText">כל 10 כוכבים שווים תיבה אחת. מה יש בפנים?</p>
+    <button class="big" id="gOpen">לפתוח!</button>
+    <button class="big" id="gClose" hidden>איזה כיף!</button>
+  </div>
+</div>
+
+<div class="building" id="building" hidden><canvas id="buildChar" width="220" height="220"></canvas><b>בונה את המבוך…</b></div>
+
+<div class="medal-pop" id="medalPop" hidden><i id="mpIcon"></i><div><b id="mpName"></b><span id="mpDesc"></span></div></div>
+
+<!-- COLLECTION -->
+<div class="wrap" id="collScreen" hidden>
+  <div class="bar">
+    <button class="back" id="collBack">→ למפה</button>
+    <h2>האוסף שלי</h2>
+  </div>
+  <div class="seg coll-tabs" style="grid-template-columns:1fr 1fr"><button id="tabStick" aria-pressed="true">📒 מדבקות <small id="stickerCount"></small></button><button id="tabMedal" aria-pressed="false">🏅 מדליות <small id="medalCount"></small></button></div>
+  <section id="stickSec" style="display:flex;flex-direction:column;gap:8px">
+    <div class="progress"><i id="stickerBar"></i></div>
+    <p class="lead" style="margin:0">בכל שלב מוחבאת מדבקה אחת. מוצאים אותה במבוך, והיא נדבקת כאן.</p>
+    <div id="albums" style="display:flex;flex-direction:column;gap:8px"></div>
+  </section>
+  <section id="medalSec" hidden style="display:flex;flex-direction:column;gap:8px">
+    <p class="lead" style="margin:0">נגיעה במדליה מראה מה צריך לעשות כדי לקבל אותה.</p>
+    <p class="medal-info" id="medalInfo" hidden></p>
+    <div class="medals" id="medals"></div>
+  </section>
+</div>
+
+<!-- TWO PLAYERS -->
+<div class="wrap" id="duelScreen" hidden>
+  <div class="bar">
+    <button class="back" id="duelBack">→ למפה</button>
+    <h2 style="font-family:var(--display);font-weight:400;margin:0;font-size:1.5rem;flex:1">👭 משחק בשתיים</h2>
+  </div>
+  <p class="lead">שתיכן משחקות באותו מבוך בדיוק, כל אחת בתורה שלה. מי שאוספת יותר כוכבים מנצחת בסיבוב, ואם יש תיקו, מנצחת מי שהייתה מהירה יותר.</p>
+  <div class="pcards">
+    <div class="pcard"><span class="tag">שחקנית 1</span><canvas id="p1c" width="168" height="168"></canvas>
+      <div class="sw"><button id="p1prev" aria-label="הדמות הקודמת">▶</button><span id="p1cn"></span><button id="p1next" aria-label="הדמות הבאה">◀</button></div>
+      <label for="p1name" class="note">השם</label><input id="p1name" maxlength="12" autocomplete="off"></div>
+    <div class="pcard"><span class="tag">שחקנית 2</span><canvas id="p2c" width="168" height="168"></canvas>
+      <div class="sw"><button id="p2prev" aria-label="הדמות הקודמת">▶</button><span id="p2cn"></span><button id="p2next" aria-label="הדמות הבאה">◀</button></div>
+      <label for="p2name" class="note">השם</label><input id="p2name" maxlength="12" autocomplete="off"></div>
+  </div>
+  <div class="settings">
+    <h3>באיזה עולם?</h3>
+    <div class="wchips" id="wchips"></div>
+    <h3>גודל המבוך</h3>
+    <div class="seg" id="sizeSeg"><button id="sz1" data-v="1">קטן</button><button id="sz3" data-v="3">בינוני</button><button id="sz5" data-v="5">גדול</button></div>
+    <h3>כמה סיבובים?</h3>
+    <div class="seg" id="roundSeg" style="grid-template-columns:repeat(3,1fr)"><button id="rd1" data-v="1">1</button><button id="rd3" data-v="3">3</button><button id="rd5" data-v="5">5</button></div>
+  </div>
+  <button class="big" id="duelStart" style="font-size:1.3rem">יאללה, מתחילות!</button>
+</div>
+
+<!-- BUILD -->
+<div class="wrap" id="buildScreen" hidden>
+  <div class="bar">
+    <button class="back" id="buildBack">→ למפה</button>
+    <h2 style="font-family:var(--display);font-weight:400;margin:0;font-size:clamp(1.15rem,5.5vw,1.5rem);flex:1;white-space:nowrap">🧱 בונים מבוך</h2>
+  </div>
+  <div id="bGallery">
+    <p class="lead">בונים מבוך משלך: מציירים קירות, שמים 3 כוכבים ויעד, ומשחקים בו. אפשר גם לתת לחברה לנסות! בפעם הראשונה אני אראה לך צעד אחרי צעד 🙂</p>
+    <button class="big" id="bNewBtn">➕ מבוך חדש</button>
+    <p class="note" id="bFull" hidden>אפשר לשמור עד 12 מבוכים. מחקי אחד כדי לבנות חדש.</p>
+    <p class="note" id="bEmpty">עוד אין לך מבוכים. לחצי על "מבוך חדש" כדי להתחיל!</p>
+    <div class="blist" id="bList"></div>
+    <div id="bFamBox" hidden><h3 class="bfh">👪 אתגרים מהמשפחה</h3><div class="blist" id="bFamList"></div></div>
+    <div class="settings">
+      <h3>📥 קיבלת קוד של מבוך?</h3>
+      <div class="bcode"><input id="bCodeIn" placeholder="מדביקים כאן את הקוד" autocomplete="off" aria-label="קוד של מבוך"><button class="plain" id="bCodeGo">לפתוח</button></div>
+      <p class="note" id="bImpMsg"></p>
+    </div>
+  </div>
+  <div id="bEditor" hidden>
+    <input id="bName" class="bname" maxlength="16" autocomplete="off" aria-label="שם המבוך">
+    <div class="bsize"><span>גודל</span><button type="button" id="bSzMinus" aria-label="קטן יותר">−</button>
+      <input type="range" id="bSzR" min="5" max="15" step="1" aria-label="גודל המבוך"><button type="button" id="bSzPlus" aria-label="גדול יותר">+</button><b id="bSzT"></b></div>
+    <div class="bcoach" id="bCoach" hidden aria-live="polite"><canvas id="bCoachC" width="88" height="88"></canvas><div class="bcw"><p id="bCoachT"></p><div class="bcdots" id="bCoachDots"></div>
+      <div class="bcbtns"><button class="plain" id="bCoachNext">דלגי ◀</button><button class="plain" id="bCoachX">✖ בלי עזרה</button></div></div></div>
+    <div class="btabs" id="bTabs"><button data-tab="walls">🧱 קירות</button><button data-tab="places">📍 מקומות</button><button data-tab="special">✨ מיוחדים</button><button data-tab="deco">🎨 קישוט</button></div>
+    <div class="btools" id="bTools"></div>
+    <div class="bcols" id="bCols"></div>
+    <canvas id="bCv" width="680" height="680" aria-label="לוח הבנייה"></canvas>
+    <p class="bmsg" id="bMsg" aria-live="polite"></p>
+    <div class="bdiff" id="bDiff" hidden><span>קושי</span><div class="dbar"><i id="bDiffBar"></i></div><b id="bDiffT"></b></div>
+    <p class="note bdtip" id="bDiffTip" hidden></p>
+    <div class="brow"><button class="plain" id="bUndoBtn">↩ בטל</button><button class="plain" id="bRand">🎲 הפתעה</button><button class="plain" id="bClear">🧹 לנקות</button></div>
+    <div class="brow2"><button class="plain" id="bRobotBtn">🤖 הרובוט פותר</button><button class="plain" id="bHelpBtn">❓ איך בונים?</button></div>
+    <button class="big" id="bPlayBtn">▶ לשחק במבוך</button>
+    <div class="settings">
+      <h3>איזה עולם?</h3>
+      <div class="wchips" id="bTheme" style="grid-template-columns:repeat(4,minmax(0,1fr))"></div>
+      <p class="note">בכל עולם יש חפצים מיוחדים משלו: מפתחות ודלתות בטירה, גשרים בג׳ונגל, פורטלים בחלל ופטריות ביער.</p>
+      <h3>💌 הודעה למי שמסיים</h3>
+      <input id="bNoteIn" class="binp" maxlength="60" autocomplete="off" placeholder="למשל: כל הכבוד! 🎉" aria-label="הודעה למי שמסיים">
+      <h3>👪 אתגר למשפחה</h3>
+      <p class="note">שולחים את המבוך לכל מי שמשחק בטלפון הזה. כל אחת מנסה, והזמנים נרשמים בטבלה. מטרת זמן:</p>
+      <div class="seg" id="bTarget" style="grid-template-columns:repeat(4,1fr)"><button data-v="0">בלי</button><button data-v="30">30 שנ׳</button><button data-v="60">60 שנ׳</button><button data-v="90">90 שנ׳</button></div>
+      <button class="plain bfam" id="bFamBtn">👪 לשלוח למשפחה</button>
+      <h3>📤 לשתף בטלפון אחר</h3>
+      <p class="note">את הקוד הזה אפשר לשלוח. בטלפון אחר מדביקים אותו ב"קיבלת קוד של מבוך?"</p>
+      <div class="bcode"><input id="bCodeOut" readonly aria-label="קוד המבוך"><button class="plain" id="bCopy">📋 להעתיק</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHOP -->
+<div class="wrap" id="shopScreen" hidden>
+  <div class="bar">
+    <button class="back" id="shopBack">→ למפה</button>
+    <h2>חנות התלבושות</h2>
+    <span class="chip" id="wallet">⭐ 0</span>
+  </div>
+  <div class="preview">
+    <canvas id="bigChar" width="340" height="340"></canvas>
+    <div class="switch">
+      <button id="prevChar" aria-label="הדמות הקודמת">▶</button>
+      <strong id="charName"></strong>
+      <button id="nextChar" aria-label="הדמות הבאה">◀</button>
+    </div>
+  </div>
+  <p class="lead">בחרי דמות עם החצים. קונים כל בגד פעם אחת, ואפשר להלביש בו את כל הדמויות.</p>
+  <div id="slots" style="display:flex;flex-direction:column;gap:10px"></div>
+  <div class="next-friends" id="nextFriends"></div>
+  <details class="locked-box"><summary id="lockedSum"></summary><div class="locked-row" id="lockedChars"></div></details>
+</div>
+
+<!-- GAME -->
+<div class="wrap" id="gameScreen" hidden>
+  <div class="bar">
+    <button class="back" id="back">→ למפה</button>
+    <div class="gtitle"><canvas id="gIcon" width="68" height="68"></canvas><span id="gTitle"></span></div>
+    <button class="rbtn" id="fsBtn" aria-label="מסך מלא" title="מסך מלא">⛶</button>
+    <button class="rbtn" id="helpBtn" aria-label="איך משחקים">?</button>
+    <span class="chip" id="gStars">☆☆☆</span>
+  </div>
+  <div class="toprow"><button class="plain fs-exit" id="fsExit" aria-label="למפה" title="למפה">→ 🗺️</button><div class="hud" id="hud"></div></div>
+  <div class="quiz" id="quiz" hidden><span id="qLabel"></span><bdi id="qExpr" dir="ltr"></bdi><div class="qopts" id="qOpts"></div><button class="qsay" id="qSay" aria-label="להקשיב שוב" hidden>🔊</button></div>
+  <div class="board" id="board">
+    <canvas id="c"></canvas>
+    <div class="overlay" id="tut" hidden>
+      <h3 id="tutTitle"></h3>
+      <div class="tut-steps" id="tutSteps"></div>
+      <button class="big" id="tutGo">יאללה!</button>
+    </div>
+    <div class="overlay" id="turn" hidden>
+      <canvas id="turnChar" width="180" height="180"></canvas>
+      <h3 id="turnTitle"></h3>
+      <p id="turnText"></p>
+      <button class="big" id="turnGo">מוכנה! ▶</button>
+    </div>
+    <div class="overlay" id="duelRes" hidden>
+      <h3 id="drTitle"></h3>
+      <div class="res" id="drRows"></div>
+      <p id="drText"></p>
+      <p id="drNote" class="drnote" hidden></p>
+      <div id="drLb" class="drlb" hidden><div class="bcode"><input id="drName" maxlength="12" autocomplete="off" aria-label="השם שלך"><button class="plain" id="drSave">🏆 לרשום</button></div><ol id="drTop"></ol></div>
+      <div class="btns"><button class="big" id="drNext"></button><button class="plain" id="drMap">למפה</button></div>
+    </div>
+    <div class="overlay" id="keypad" hidden>
+      <div class="kp"><h3>🔐 מה הקוד?</h3><p id="kpCode" dir="ltr"></p><div class="kps" id="kpSlots" dir="ltr"></div><small id="kpNote"></small>
+        <div class="kpg" dir="ltr"><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button><button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button><button data-k="<">⌫</button><button data-k="0">0</button><button data-k="x">✕</button></div></div>
+    </div>
+    <div class="overlay" id="pause" hidden>
+      <h3>⏸ הפסקה</h3>
+      <p>המשחק מחכה לך</p>
+      <button class="big" id="pauseGo">▶ ממשיכים</button>
+    </div>
+    <div class="overlay" id="win" hidden>
+      <h3 id="winTitle"></h3>
+      <div class="stars" id="winStars"></div>
+      <canvas id="winChar" width="180" height="180"></canvas>
+      <p id="winText"></p>
+      <div class="btns">
+        <button class="big" id="winNext"></button>
+        <button class="plain" id="winMap">למפה</button>
+      </div>
+    </div>
+  </div>
+  <div class="ginfo" id="gInfo"><div class="gname"><canvas id="gNameIcon" width="56" height="56" aria-hidden="true"></canvas><span id="gName"></span></div></div>
+  <div class="msg" id="msg" role="status"></div>
+  <div class="pad" id="pad">
+    <button id="up" aria-label="למעלה">▲</button>
+    <button id="left" aria-label="שמאלה">◀</button>
+    <button id="down" aria-label="למטה">▼</button>
+    <button id="right" aria-label="ימינה">▶</button>
+    <button id="act" aria-label="לשים זיקוק" hidden>🎆</button>
+  </div>
+  <div class="small-btns">
+    <button class="plain" id="pauseBtn" aria-label="הפסקה">⏸</button>
+    <button class="plain" id="hintBtn" hidden aria-label="רמז" title="רמז">💡</button>
+    <button class="plain" id="undoBtn" hidden aria-label="צעד אחורה" title="צעד אחורה">↩</button>
+    <button class="plain" id="coinsBtn" hidden aria-label="להחזיר את המטבעות" title="להחזיר את המטבעות">🪙↩</button>
+    <button class="plain" id="giveUp" hidden aria-label="לוותר על התור" title="לוותר על התור">🏳️</button>
+    <div class="more">
+      <button class="plain" id="moreBtn" aria-expanded="false" aria-label="עוד" title="עוד">⋯</button>
+      <div class="more-menu" id="moreMenu" hidden>
+        <button class="plain" id="retry">🔄 להתחיל את השלב מחדש</button>
+        <button class="plain" id="newMaze">🎲 מבוך אחר</button>
+        <button class="plain" id="padBtn">🎮 בלי חצים</button>
+        <button class="plain" id="mSound"></button>
+        <button class="plain" id="mVoice"></button>
+        <button class="plain fs-exit" id="helpMenu">❓ איך משחקים</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+@include gen/01-mazes.js
+@include gen/02-arcade.js
+@include gen/03-sports.js
+@include gen/04-challenge.js
+@include gen/05-newest.js
+@include gen/06-fairytale.js
+@include gen/07-story.js
+@include gen/08-puzzles.js
+@include gen/09-wizard.js
+@include gen/10-vehicles.js
+@include gen/99-exports.js
+</script>
+
+<script>
+@include game/00-start.js
+@include game/01-drawing.js
+@include game/02-outfits.js
+@include game/03-worlds.js
+@include game/04-progress.js
+@include game/05-map.js
+@include game/06-q-numbers.js
+@include game/07-q-words.js
+@include game/08-q-geometry.js
+@include game/10-engine.js
+@include game/20-arcade.js
+@include game/21-sports.js
+@include game/22-challenge.js
+@include game/23-newest.js
+@include game/24-fairytale.js
+@include game/25-story.js
+@include game/26-puzzles.js
+@include game/27-wizard.js
+@include game/28-vehicles.js
+@include game/30-effects.js
+@include game/31-render.js
+@include game/32-controls.js
+@include game/40-two-players.js
+@include game/41-builder.js
+@include game/42-shop.js
+@include game/43-collection.js
+@include game/99-boot.js
+</script>
