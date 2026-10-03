@@ -34,8 +34,7 @@ function bG(d){const n=d.n,W=new Set(d.wl),g=[];
   for(let y=0;y<n;y++){g.push([]);for(let x=0;x<n;x++){const me=bAt(d,x,y);
     g[y].push(DV.map(([dx,dy],k)=>{const a=x+dx,b=y+dy;if(a<0||b<0||a>=n||b>=n)return 1;if(me!==bAt(d,a,b))return 1;return W.has(GEN.edgeKey(x,y,k))?1:0;}));}}
   return g;}
-function bDist(d){const n=d.n,g=bG(d),dist=Array.from({length:n},()=>Array(n).fill(-1)),q=[d.s];dist[d.s[1]][d.s[0]]=0;
-  for(let h=0;h<q.length;h++){const [x,y]=q[h];for(let k=0;k<4;k++){if(g[y][x][k])continue;const a=x+DV[k][0],b=y+DV[k][1];if(dist[b][a]>=0)continue;dist[b][a]=dist[y][x]+1;q.push([a,b]);}}return dist;}
+function bDist(d){return GEN.bfs(bG(d),d.n,d.s[0],d.s[1]).dist;}
 // the robot: searches every way to walk, with the keys it holds, the stars it has and the bridges that fell
 function bSolve(d){
   const n=d.n,g=bG(d),I=bItems(d),keyAt=new Map(I.keys.map(k=>[bK(k.x,k.y),k.c])),door=I.doors,starAt=new Map(d.st.map((c,i)=>[bK(...c),i])),brAt=new Map(I.br.map((c,i)=>[bK(...c),i]));
