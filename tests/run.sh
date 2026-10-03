@@ -1,7 +1,7 @@
 #!/bin/bash
 # runs test suites in parallel (logs in dist/logs). Usage: tests/run.sh [quick|full|names...]
 # the bot suites are slow; run them a few at a time (full can take 15+ min)
-cd "$(dirname "$0")/.." && mkdir -p dist/logs
+cd "$(dirname "$0")/.." && mkdir -p dist/logs dist/shots
 QUICK="fingerprint screens registry smoke ux qa_edge b2_test coach_test bk_test dist_test"
 FULL="$QUICK qa_new qa_nw qa_st qa_rh qa_wz qa_sport qa_arc qa_ft qa_ch qa_pz2 pz_t2 vh_bot b2_dist qa_b3 gi_test bk_t2"
 case "$1" in ''|quick) T=$QUICK;; full) T=$FULL;; *) T="$@";; esac
