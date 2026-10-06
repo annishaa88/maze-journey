@@ -16,3 +16,7 @@ A maze game for kids. It ships as **one HTML file** (`dist/game.html`) and as an
     npm test             # quick suites in parallel (logs in dist/logs)
     npm run test:full    # all bots (slow)
     npm run golden       # re-record level fingerprints after an intended generator change
+
+## Publishing
+`docs/` holds the built offline app (GitHub Pages serves it: Settings → Pages → branch `main`, folder `/docs`).
+To refresh it: `npm run build && rm -rf docs && cp -r dist/app docs`, then commit and push.
